@@ -1,0 +1,352 @@
+import pathlib
+import typing
+
+import httpx
+import jinja2
+import markdown
+import tomllib
+import importlib.resources
+
+from .rewrite_urls import PageContext
+
+
+# Config...
+
+class Config:
+    def __init__(self, config: dict, filename: str) -> None:
+        self._config = config
+        self._filename = filename
+
+    def get(self, *args: str):
+        value = self._config
+        for arg in args:
+            if not isinstance(value, dict) or arg not in value:
+                return None
+            value = value[arg]
+        return value
+
+    def __getitem__(self, key: str) -> typing.Any:
+        return self._config[key]
+
+    def __repr__(self):
+        return f'<Config {self._filename!r}>'
+
+
+class ConfigError(Exception):
+    pass
+
+
+# Handlers...
+
+class Handler:
+    """
+    The base interface for loading resources.
+    """
+
+    def load_paths(self) -> list[pathlib.Path]:
+        """
+        Load a list of all the resource paths that this handler provides.
+        """
+        return []
+
+    def load_templates(self) -> jinja2.BaseLoader | None:
+        """
+        Optionally return a jinja2 loader that this handler provides.
+        """
+        return None
+
+    def read(self, path: pathlib.Path) -> bytes:
+        """
+        Load the resource content given it's path.
+        """
+        return ''
+
+    def name(self) -> str:
+        return ''
+
+
+class Directory(Handler):
+    """
+    A handler for loading resources from the local filesystem.
+    """
+
+    def __init__(self, dir: pathlib.Path | None = None) -> None:
+        self._dir = pathlib.Path.cwd() if dir is None else pathlib.Path(dir)
+        self._dir_repr = '[CWD]' if dir is None else f"{dir!r}"
+        self._template_dir = 'templates'
+
+    def load_paths(self) -> list[pathlib.Path]:
+        return sorted([
+            f.relative_to(self._dir)
+            for f in self._dir.rglob("[!.]*")
+            if f.is_file() and not f.parts[0] == self._template_dir
+        ])
+
+    def load_templates(self) -> jinja2.BaseLoader | None:
+        t = self._dir.joinpath(self._template_dir)
+        return jinja2.FileSystemLoader(t) if t.exists() and t.is_dir() else None
+
+    def read(self, path: pathlib.Path) -> bytes:
+        return self._dir.joinpath(path).read_bytes()
+
+    def name(self) -> str:
+        return 'docs'
+
+    def __repr__(self):
+        return f'<Directory {self._dir_repr}>'
+
+
+class Package(Handler):
+    """
+    A handler for loading resources from a python package.
+    """
+
+    def __init__(self, pkg: str = 'mkdocs') -> None:
+        self._pkg = pkg
+        self._files = importlib.resources.files(pkg).joinpath('theme')
+        self._templates = importlib.resources.files(pkg).joinpath('theme', 'templates')
+
+    def _load_paths(self, subdir: str) -> list[pathlib.Path]:
+        files = []
+        for entry in self._files.joinpath(subdir).iterdir():
+            if entry.is_file():
+                f = pathlib.Path(subdir).joinpath(entry.name)
+                files.append(f)
+            elif entry.is_dir():
+                d = pathlib.Path(subdir).joinpath(entry.name)
+                for f in self._load_paths(d):
+                    files.append(f)
+        return files
+
+    def load_paths(self) -> list[pathlib.Path]:
+        return sorted([
+            p for p in self._load_paths(subdir='')
+            if not p.parts[0] == 'templates'
+        ])
+
+    def load_templates(self) -> jinja2.BaseLoader | None:
+        exists = self._templates.exists() and self._templates.is_dir()
+        return jinja2.PackageLoader(self._pkg, 'theme/templates') if exists else None
+
+    def read(self, path: pathlib.Path) -> bytes:
+        return self._files.joinpath(path).read_bytes()
+
+    def name(self) -> str:
+        return 'theme'
+
+    def __repr__(self):
+        return f'<Package {self._pkg!r}>'
+
+
+class Resource:
+    def __init__(self, path: pathlib.Path, url: str, handler: Handler) -> None:
+        self.path = path
+        self.url = url
+        self.handler = handler
+ 
+    @property
+    def output_path(self) -> pathlib.Path:
+        if self.url.endswith('/'):
+            return pathlib.Path(self.url.lstrip('/')).joinpath('index.html')
+        return pathlib.Path(self.url.lstrip('/'))
+
+    def read(self) -> bytes:
+        return self.handler.read(self.path)
+
+    def __repr__(self) -> str:
+        return f'<Resource {self.url!r} {self.path.as_posix()!r} [{self.handler.name()}]>'
+
+
+class MkDocs:
+    def __init__(self):
+        self.content_types = {
+            ".json": "application/json",
+            ".js": "application/javascript",
+            ".html": "text/html",
+            ".css": "text/css",
+            ".png": "image/png",
+            ".jpeg": "image/jpeg",
+            ".jpg": "image/jpeg",
+            ".gif": "image/gif",
+        }
+
+    def path_to_url(self, path: pathlib.Path) -> str:
+        if str(path).lower() in ('readme.md', 'index.md', 'index.html'):
+            # 'README.md' -> '/'
+            # 'index.html' -> '/'
+            return pathlib.Path('/').joinpath(path).parent.as_posix().lower()
+        if path.name.lower() in ('readme.md', 'index.md', 'index.html'):
+            # 'topics/README.md' -> '/'
+            # 'topics/index.html' -> '/topics/'
+            return pathlib.Path('/').joinpath(path).parent.as_posix().lower() + '/'
+        elif path.suffix == '.md':
+            # 'quickstart.md' -> '/quickstart/'
+            # 'topics/installation.md' -> '/topics/installation/'
+            return pathlib.Path('/').joinpath(path).with_suffix('').as_posix().lower() + '/'
+        # 'css/styles.css' -> '/css/styles.css'
+        return pathlib.Path('/').joinpath(path).as_posix()
+
+    def log(self, msg: str) -> None:
+        print(msg)
+
+    def load_config(self, filename: str) -> dict:
+        path = pathlib.Path(filename)
+        if not path.exists():
+            raise ConfigError(f"Missing config '{filename}'")
+
+        text = path.read_text()
+        try:
+            config = tomllib.loads(text)
+        except tomllib.TOMLDecodeError as exc:
+            raise ConfigError(f"Invalid TOML in config '{filename}'\n{exc}")
+
+        if 'mkdocs' not in config:
+            raise ConfigError(f"Config '{filename}' missing '[mkdocs]' section.")
+        if 'version' not in config['mkdocs']:
+            raise ConfigError(f"Config '{filename}' missing 'version=...' in '[mkdocs]' section.")
+        if config['mkdocs']['version'] != 2:
+            raise ConfigError(f"Config '{filename}' expected 'version=2' in '[mkdocs]' section.")
+
+        default = {
+            'mkdocs': {
+                'version': 2
+            },
+            'site': {
+                'title': 'MkDocs',
+                'favicon': '📘',
+                'nav': [],
+                # 'nav': [
+                #     {'title': 'Introduction', 'path': 'README.md'},
+                #     {'title': 'Writing content', 'path': 'writing.md'},
+                #     {'title': 'Site navigation', 'path': 'navigation.md'},
+                #     {'title': 'Themes & styling', 'path': 'styling.md'},
+                # ],
+            },
+            # 'handlers': {
+            #     'theme': {'type': 'mkdocs.Package', 'pkg': 'mkdocs:theme'}
+            #     'docs': {'type': 'mkdocs.FileSystem', 'dir': 'docs'}
+            # },
+            'markdown': {
+                'extensions': {
+                    'fenced_code',
+                    'footnotes',
+                    'tables',
+                    'toc',
+                    # 'pymdownx.tasklist',
+                    # 'gfm_admonition',
+                    'mkdocs.rewrite_urls',
+                    'mkdocs.short_codes',
+                    'mkdocs.strike_thru',
+                },
+                'configs': {
+                    'footnotes': {'BACKLINK_TITLE': ''},
+                    'toc': {'anchorlink': True, 'marker': ''}
+                },
+            },
+        }
+        for key, value in default.items():
+            if key not in config:
+                config[key] = value
+        return Config(config, filename=filename)
+
+    def load_handlers(self, config: dict) -> list[Handler]:
+        return [
+            Package('mkdocs'),
+            Directory('docs'),
+        ]
+
+    def load_resources(self, handlers: list[Handler]) -> list[Resource]:
+        resources = {}
+        for handler in handlers:
+            for path in handler.load_paths():
+                url = self.path_to_url(path)
+                resources[path] = Resource(path, url, handler)
+        return list(resources.values())
+
+    def load_env(self, handlers: list[Handler]) -> jinja2.Environment:
+        loaders: list[jinja2.BaseLoader] = []
+        for handler in reversed(handlers):
+            t = handler.load_templates()
+            if t is not None:
+                loaders.append(t)
+        loader = jinja2.ChoiceLoader(loaders)
+        return jinja2.Environment(loader=loader, auto_reload=True)
+
+    def load_md(self, config) -> markdown.Markdown:
+        return markdown.Markdown(
+            extensions=config['markdown']['extensions'],
+            extension_configs=config['markdown']['configs']
+        )
+
+    def nav_lines(self, nav: dict, indent="") -> list[str]:
+        lines = []
+        for elem in nav:
+            if 'path' in elem:
+                lines.append(f'{indent}* [{elem['title']}]({elem['path']})')
+            else:
+                lines.append(f'{indent}* {elem['title']}')
+            if 'children' in elem:
+                sub_lines = self.nav_lines(elem['children'], indent + "    ")
+                lines.extend(sub_lines)
+        return lines
+
+    def render(self, resource: Resource, resources: list[Resource], config: dict, env: jinja2.Environment, md: markdown.Markdown) -> bytes:
+        if resource.path.suffix == '.md':
+            mapping = {resource.path: resource.url for resource in resources}
+            with PageContext(resource.path, mapping) as page:
+                nav_lines = self.nav_lines(config['site']['nav'])
+                nav_text = '\n'.join(nav_lines)
+                nav_html = md.reset().convert(nav_text)
+            with PageContext(resource.path, mapping):
+                page_text = resource.read().decode('utf-8')
+                page_html = md.reset().convert(page_text)
+
+            base = env.get_template('base.html')
+            return base.render(content=page_html, nav=nav_html, toc=md.toc, config=config, page=page).encode('utf-8')
+        return resource.read()
+
+    # Commands...
+
+    def build(self):
+        """
+        $ mkdocs build
+        """
+        config = self.load_config('mkdocs.toml')
+        handlers = self.load_handlers(config)
+        resources = self.load_resources(handlers)
+        env = self.load_env(config)
+        md = self.load_md(config)
+        buildpath = pathlib.Path('site')
+
+        for resource in resources:
+            output = self.render(resource, resources, config, env, md)
+            build_path = buildpath.joinpath(resource.output_path)
+            self.log(build_path)
+            build_path.parent.mkdir(parents=True, exist_ok=True)
+            build_path.write_bytes(output)
+
+    def serve(self):
+        """
+        $ mkdocs serve
+        """
+        config = self.load_config('mkdocs.toml')
+        handlers = self.load_handlers(config)
+        resources = self.load_resources(handlers)
+        env = self.load_env(handlers)
+        md = self.load_md(config)
+        urls = {resource.url: resource for resource in resources}
+
+        def app(request):
+            path = request.url.path
+            resource = urls.get(path)
+            if resource is None:
+                redirect = f"{path}/"
+                if urls.get(redirect) is not None:
+                    return httpx.Response(302, headers={'Location': redirect})
+                not_found = httpx.Text('Not Found')
+                return httpx.Response(404, content=not_found)
+            content = self.render(resource, resources, config, env, md)
+            content_type = self.content_types.get(resource.output_path.suffix)
+            return httpx.Response(200, headers={'Content-Type': content_type}, content=content)
+
+        httpx.run(app)

@@ -1,0 +1,12 @@
+[mkdocs]
+version = 2
+
+[site]
+title = "MkDocs"
+favicon = "📘"
+nav = [
+    {title="Introduction", path="index.md"},
+    {title="Writing markdown", path="writing.md"},
+    {title="Site navigation", path="navigation.md"},
+    {title="Styling your website", path="styling.md"}
+]
