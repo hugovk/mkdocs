@@ -49,12 +49,6 @@ class Handler:
         """
         return []
 
-    def load_templates(self) -> jinja2.BaseLoader | None:
-        """
-        Optionally return a jinja2 loader that this handler provides.
-        """
-        return None
-
     def read(self, path: pathlib.Path) -> bytes:
         """
         Load the resource content given it's path.
@@ -73,18 +67,13 @@ class Directory(Handler):
     def __init__(self, dir: pathlib.Path | None = None) -> None:
         self._dir = pathlib.Path.cwd() if dir is None else pathlib.Path(dir)
         self._dir_repr = '[CWD]' if dir is None else f"{dir!r}"
-        self._template_dir = 'templates'
 
     def load_paths(self) -> list[pathlib.Path]:
         return sorted([
             f.relative_to(self._dir)
             for f in self._dir.rglob("[!.]*")
-            if f.is_file() and not f.parts[0] == self._template_dir
+            if f.is_file()
         ])
-
-    def load_templates(self) -> jinja2.BaseLoader | None:
-        t = self._dir.joinpath(self._template_dir)
-        return jinja2.FileSystemLoader(t) if t.exists() and t.is_dir() else None
 
     def read(self, path: pathlib.Path) -> bytes:
         return self._dir.joinpath(path).read_bytes()
@@ -104,7 +93,6 @@ class Package(Handler):
     def __init__(self, pkg: str = 'mkdocs') -> None:
         self._pkg = pkg
         self._files = importlib.resources.files(pkg).joinpath('theme')
-        self._templates = importlib.resources.files(pkg).joinpath('theme', 'templates')
 
     def _load_paths(self, subdir: str) -> list[pathlib.Path]:
         files = []
@@ -119,14 +107,7 @@ class Package(Handler):
         return files
 
     def load_paths(self) -> list[pathlib.Path]:
-        return sorted([
-            p for p in self._load_paths(subdir='')
-            if not p.parts[0] == 'templates'
-        ])
-
-    def load_templates(self) -> jinja2.BaseLoader | None:
-        exists = self._templates.exists() and self._templates.is_dir()
-        return jinja2.PackageLoader(self._pkg, 'theme/templates') if exists else None
+        return sorted(self._load_paths(subdir=''))
 
     def read(self, path: pathlib.Path) -> bytes:
         return self._files.joinpath(path).read_bytes()
@@ -137,6 +118,8 @@ class Package(Handler):
     def __repr__(self):
         return f'<Package {self._pkg!r}>'
 
+
+# Resources & Templates...
 
 class Resource:
     def __init__(self, path: pathlib.Path, url: str, handler: Handler) -> None:
@@ -155,6 +138,31 @@ class Resource:
 
     def __repr__(self) -> str:
         return f'<Resource {self.url!r} {self.path.as_posix()!r} [{self.handler.name()}]>'
+
+
+class Template:
+    def __init__(self, name: str, path: pathlib.Path, handler: Handler) -> None:
+        self.name = name
+        self.path = path
+        self.handler = handler
+
+    def read(self) -> bytes:
+        return self.handler.read(self.path)
+
+    def __repr__(self) -> str:
+        return f'<Template {self.path.as_posix()!r} [{self.handler.name()}]>'
+
+
+class TemplateLoader(jinja2.BaseLoader):
+    def __init__(self, templates: list[Template]):
+        self.templates = templates
+
+    def get_source(self, environment, template: str):
+        for t in self.templates:
+            if t.name == template:
+                source = t.read().decode('utf-8')
+                return source, t.path, None
+        raise jinja2.TemplateNotFound(template)
 
 
 class MkDocs:
@@ -255,21 +263,21 @@ class MkDocs:
             Directory('docs'),
         ]
 
-    def load_resources(self, handlers: list[Handler]) -> list[Resource]:
+    def load_resources(self, handlers: list[Handler]) -> tuple[list[Resource], list[Template]]:
         resources = {}
+        templates = {}
         for handler in handlers:
             for path in handler.load_paths():
-                url = self.path_to_url(path)
-                resources[path] = Resource(path, url, handler)
-        return list(resources.values())
+                if path.parts[0] == 'templates':
+                    name = str(pathlib.Path(*path.parts[1:]))
+                    templates[path] = Template(name, path, handler)
+                else:
+                    url = self.path_to_url(path)
+                    resources[path] = Resource(path, url, handler)
+        return (list(resources.values()), list(templates.values()))
 
-    def load_env(self, handlers: list[Handler]) -> jinja2.Environment:
-        loaders: list[jinja2.BaseLoader] = []
-        for handler in reversed(handlers):
-            t = handler.load_templates()
-            if t is not None:
-                loaders.append(t)
-        loader = jinja2.ChoiceLoader(loaders)
+    def load_env(self, templates: list[Template]) -> jinja2.Environment:
+        loader = TemplateLoader(templates)
         return jinja2.Environment(loader=loader, auto_reload=True)
 
     def load_md(self, config) -> markdown.Markdown:
@@ -313,11 +321,11 @@ class MkDocs:
         """
         config = self.load_config('mkdocs.toml')
         handlers = self.load_handlers(config)
-        resources = self.load_resources(handlers)
-        env = self.load_env(config)
+        resources, templates = self.load_resources(handlers)
+        env = self.load_env(templates)
         md = self.load_md(config)
-        buildpath = pathlib.Path('site')
 
+        buildpath = pathlib.Path('site')
         for resource in resources:
             output = self.render(resource, resources, config, env, md)
             build_path = buildpath.joinpath(resource.output_path)
@@ -331,11 +339,11 @@ class MkDocs:
         """
         config = self.load_config('mkdocs.toml')
         handlers = self.load_handlers(config)
-        resources = self.load_resources(handlers)
-        env = self.load_env(handlers)
+        resources, templates = self.load_resources(handlers)
+        env = self.load_env(templates)
         md = self.load_md(config)
-        urls = {resource.url: resource for resource in resources}
 
+        urls = {resource.url: resource for resource in resources}
         def app(request):
             path = request.url.path
             resource = urls.get(path)
