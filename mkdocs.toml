@@ -6,7 +6,7 @@ title = "MkDocs"
 favicon = "📘"
 nav = [
     {title="Introduction", path="index.md"},
-    {title="Writing markdown", path="writing.md"},
-    {title="Site navigation", path="navigation.md"},
-    {title="Styling your website", path="styling.md"}
+    {title="Writing Markdown", path="writing.md"},
+    {title="Site Navigation", path="navigation.md"},
+    {title="HTML Styling", path="styling.md"}
 ]
