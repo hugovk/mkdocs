@@ -13,6 +13,7 @@ codes = {
     'bug': '🐛',
     'thinking': '🤔',
     'eyes': '👀',
+    'shipit': '🚢',
 }
 
 

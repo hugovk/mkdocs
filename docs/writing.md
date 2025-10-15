@@ -40,11 +40,11 @@ These are the elements outlined in John Gruber’s original design document. All
 
 ## Link
 
-[About](ABOUT.md)
+[Homepage](index.md)
 
 ## Image
 
-![calt text](img/codercat.jpg)
+![coder cat](img/codercat.png)
 
 ## Table
 
@@ -103,7 +103,7 @@ Here's a sentence with a footnote. [^1]
 
 `@octocat :+1: This PR looks great - it's ready to merge! :shipit:`
 
-@octocat :+1: This PR looks great - it's ready to merge! :shipit:
+@octocat :+1: This PR looks great :heart: - it's ready to merge! :shipit:
 
 ### Task List
 
