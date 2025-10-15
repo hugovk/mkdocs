@@ -27,11 +27,22 @@ class URLProcessor(markdown.treeprocessors.Treeprocessor):
         ctx = page_context.get()
         links = []
         idx = 0
+        key = ''
+        link = ''
 
-        for el in root.iter('a'):
-            href = el.get('href')
-            if href:
-                url = httpx.URL(href)
+        for el in root.iter():
+            if el.tag == 'a':
+                key = 'href'
+                link = el.get(key)
+            elif el.tag == 'img':
+                key = 'src'
+                link = el.get(key)
+            else:
+                key = ''
+                link = ''
+
+            if link:
+                url = httpx.URL(link)
                 if url.is_relative_url and url._uri_reference.path:
                     from_path = ctx.path
                     to_path = ctx.path.parent.joinpath(url.path)
@@ -46,7 +57,7 @@ class URLProcessor(markdown.treeprocessors.Treeprocessor):
                         rewrite += f'?{url.query}'
                     if url.fragment:
                         rewrite += f'#{url.fragment}'
-                    el.set('href', rewrite)
+                    el.set(key, rewrite)
                     links.append({"title": el.text, "url": rewrite})
 
                     if from_url == to_url:

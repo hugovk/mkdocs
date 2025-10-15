@@ -55,9 +55,6 @@ class Handler:
         """
         return ''
 
-    def name(self) -> str:
-        return ''
-
 
 class Directory(Handler):
     """
@@ -77,9 +74,6 @@ class Directory(Handler):
 
     def read(self, path: pathlib.Path) -> bytes:
         return self._dir.joinpath(path).read_bytes()
-
-    def name(self) -> str:
-        return 'docs'
 
     def __repr__(self):
         return f'<Directory {self._dir_repr}>'
@@ -112,9 +106,6 @@ class Package(Handler):
     def read(self, path: pathlib.Path) -> bytes:
         return self._files.joinpath(path).read_bytes()
 
-    def name(self) -> str:
-        return 'theme'
-
     def __repr__(self):
         return f'<Package {self._pkg!r}>'
 
@@ -137,7 +128,7 @@ class Resource:
         return self.handler.read(self.path)
 
     def __repr__(self) -> str:
-        return f'<Resource {self.url!r} {self.path.as_posix()!r} [{self.handler.name()}]>'
+        return f'<Resource {self.url!r} {self.path.as_posix()!r}>'
 
 
 class Template:
@@ -150,7 +141,7 @@ class Template:
         return self.handler.read(self.path)
 
     def __repr__(self) -> str:
-        return f'<Template {self.path.as_posix()!r} [{self.handler.name()}]>'
+        return f'<Template {self.name!r}>'
 
 
 class TemplateLoader(jinja2.BaseLoader):
@@ -194,9 +185,6 @@ class MkDocs:
         # 'css/styles.css' -> '/css/styles.css'
         return pathlib.Path('/').joinpath(path).as_posix()
 
-    def log(self, msg: str) -> None:
-        print(msg)
-
     def load_config(self, filename: str) -> dict:
         path = pathlib.Path(filename)
         if not path.exists():
@@ -230,10 +218,10 @@ class MkDocs:
                 #     {'title': 'Themes & styling', 'path': 'styling.md'},
                 # ],
             },
-            # 'handlers': {
-            #     'theme': {'type': 'mkdocs.Package', 'pkg': 'mkdocs:theme'}
-            #     'docs': {'type': 'mkdocs.FileSystem', 'dir': 'docs'}
-            # },
+            # 'handlers': [
+            #     {'type': 'mkdocs.Package', 'pkg': 'mkdocs:theme'}
+            #     {'type': 'mkdocs.Directory', 'dir': 'docs'}
+            # ],
             'markdown': {
                 'extensions': {
                     'fenced_code',
@@ -329,7 +317,6 @@ class MkDocs:
         for resource in resources:
             output = self.render(resource, resources, config, env, md)
             build_path = buildpath.joinpath(resource.output_path)
-            self.log(build_path)
             build_path.parent.mkdir(parents=True, exist_ok=True)
             build_path.write_bytes(output)
 

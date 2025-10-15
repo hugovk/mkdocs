@@ -35,7 +35,7 @@ The base template for rendering is `templates/base.html`:
 
 You can override this template locally and adapt it to make layout changes.
 
-## Media assets
+## Media
 
 The default theme includes the following assets:
 
