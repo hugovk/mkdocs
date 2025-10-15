@@ -1,6 +1,6 @@
 # MkDocs
 
-MkDocs is a smart, simple website design tool using Markdown, templated HTML, and CSS.
+MkDocs is a smart, simple website design tool using [Markdown](writing.md), [templated HTML](styling.md#templates), and static [media files](styling.md#media).
 
 ## Installation
 

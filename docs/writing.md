@@ -1,59 +1,126 @@
 # Writing Markdown
 
-MkDocs deployed with Markdown, HTML & CSS.
+MkDocs supports regular Markdown syntax with some Github Flavored Markdown extensions.
 
-Thanks for visiting [The Markdown Guide](https://www.markdownguide.org)!
+For other references on writing in Markdown, see the [GitHub documentation](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax), the [Markdown Guide](https://www.markdownguide.org/), or the author's [original documentation](https://daringfireball.net/projects/markdown/).
 
-This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for [basic syntax](https://www.markdownguide.org/basic-syntax/) and [extended syntax](https://www.markdownguide.org/extended-syntax/).
-
-## Basic Syntax
-
-These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements.
+The rest of this page provides a reference guide to the supported markdown syntax.
 
 ## Headings
 
+```markdown
 # H1
 ## H2
 ### H3
 #### H4
 ##### H5
+```
 
-## Ordered List
+<h1>H1</h1>
+<h2>H2</h2>
+<h3>H3</h3>
+<h4>H4</h4>
+<h5>H5</h5>
 
-1. First item
-2. Second item
-3. Third item
+## Formatting
 
-## Unordered List
+```markdown
+* **Bold text**
+* *Italic text*
+* ~~Strikethrough~~
+* <ins>Underlined</ins>
+* e <sup>i π</sup> = -1
+* H<sub>2</sub>O
+```
+
+<span></span>
+
+* **Bold text**
+* *Italic text*
+* ~~Strikethrough~~
+* <ins>Underlined</ins>
+* e <sup>i π</sup> = -1
+* H<sub>2</sub>O
+
+## Lists
+
+```markdown
+- First item
+- Second item
+- Third item
+```
+
+<span></span>
 
 - First item
 - Second item
 - Third item
 
-## Code
+## Ordered Lists
 
-`code`
+```markdown
+1. First item
+2. Second item
+3. Third item
+```
 
-## Horizontal Rule
+<span></span>
 
----
+1. First item
+2. Second item
+3. Third item
 
-## Link
+## Links
 
-[Homepage](index.md)
+```markdown
+See [wikipedia](https://www.wikipedia.org/).
+```
 
-## Image
+See [wikipedia](https://www.wikipedia.org/).
+
+## Section links
+
+```markdown
+See the [Links](#links) section.
+```
+
+See the [Links](#links) section.
+
+## Relative Links
+
+```markdown
+Back to the [Homepage](index.md).
+```
+
+Back to the [Homepage](index.md).
+
+## Images
+
+```markdown
+![coder cat](img/codercat.png)
+```
 
 ![coder cat](img/codercat.png)
 
-## Table
+## Inline Code
 
-| Syntax | Description |
-| ----------- | ----------- |
-| Header | Title |
-| Paragraph | Text |
+```markdown
+`&mdash;`
+```
 
-## Fenced Code Block
+`&mdash;`
+
+## Code Block
+
+<pre><code class="language-markdown hljs">```json
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "age": 25
+}
+```</code></pre>
+
+<span></span>
 
 ```json
 {
@@ -63,49 +130,111 @@ These are the elements outlined in John Gruber’s original design document. All
 }
 ```
 
+## Horizontal Rule
+
+```markdown
+---
+```
+
+---
+
+<br/>
+
+## Table
+
+```markdown
+| Syntax    | Description |
+| --------- | ----------- |
+| Header    | Title       |
+| Paragraph | Text        |
+```
+
+<span></span>
+
+| Syntax    | Description |
+| --------- | ----------- |
+| Header    | Title       |
+| Paragraph | Text        |
+
+## Footnotes
+
+```markdown
+Here's a sentence with a footnote. [^1]
+
+[^1]: This is the footnote from earlier.
+```
+
+Here's a sentence with a footnote. [^1]
+
+[^1]: This is the footnote from earlier.
+
 ## Blockquote
+
+```markdown
+> Rumors of my death have been greatly exaggerated.
+```
 
 > Rumors of my death have been greatly exaggerated.
 
 ## Alerts
 
+```markdown
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
+```
+
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
+
+```markdown
+> [!TIP]
+> Helpful advice for doing things better or more easily.
+```
 
 > [!TIP]
 > Helpful advice for doing things better or more easily.
 
+```markdown
 > [!IMPORTANT]
 > Key information users need to know to achieve their goal.
+```
+
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
+```markdown
+> [!WARNING]
+> Urgent info that needs immediate user attention to avoid problems.
+```
 
 > [!WARNING]
 > Urgent info that needs immediate user attention to avoid problems.
 
+```markdown
+> [!CAUTION]
+> Advises about risks or negative outcomes of certain actions.
+```
+
 > [!CAUTION]
 > Advises about risks or negative outcomes of certain actions.
 
-## Formatting
-
-* **Bold text**
-* *Italic text*
-* ~~Strikethrough~~
-* <ins>Underlined</ins>
-* e <sup>i π</sup> = -1
-* H<sub>2</sub>O
-
-## Footnotes
-
-Here's a sentence with a footnote. [^1]
-
-[^1]: This is the footnote.
-
 ## Emoji
 
-`@octocat :+1: This PR looks great - it's ready to merge! :shipit:`
+```markdown
+:+1: This PR looks great :heart:
+```
 
-@octocat :+1: This PR looks great :heart: - it's ready to merge! :shipit:
+:+1: This PR looks great :heart:
 
-### Task List
+## Task List
+
+```markdown
+- [x] Write the press release
+- [ ] Update the website
+- [ ] Contact the media
+```
+
+<span></span>
 
 - [x] Write the press release
 - [ ] Update the website
