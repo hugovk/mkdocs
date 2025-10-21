@@ -289,11 +289,11 @@ class MkDocs:
     def render(self, resource: Resource, resources: list[Resource], config: dict, env: jinja2.Environment, md: markdown.Markdown) -> bytes:
         if resource.path.suffix == '.md':
             mapping = {resource.path: resource.url for resource in resources}
-            with PageContext(resource.path, mapping) as page:
+            with PageContext(resource.path, mapping, relative=False) as page:
                 nav_lines = self.nav_lines(config['site']['nav'])
                 nav_text = '\n'.join(nav_lines)
                 nav_html = md.reset().convert(nav_text)
-            with PageContext(resource.path, mapping):
+            with PageContext(resource.path, mapping, relative=True):
                 page_text = resource.read().decode('utf-8')
                 page_html = md.reset().convert(page_text)
 
