@@ -53,3 +53,27 @@ nav = [
 ```
 
 This allows the theme to display navigation controls, as well as including `← previous` and `next →` links.
+
+The navigation configuration can also include nested elements.
+
+```
+[mkdocs]
+version = 2
+
+[site]
+title = "MkDocs"
+favicon = "📘"
+nav = [
+    {title="Introduction", path="index.md"},
+    {title="Tutorial", children=[
+        {title="Creating a project", path="tutorial/new.md"},
+        {title="Adding pages", path="tutorial/pages.md"},
+        {title="Publishing your work", path="tutorial/publish.md"},
+    ]},
+    {title="Topics", children=[
+        {title="Page layouts", path="topics/layouts.md"},
+        {title="Typography", path="topics/typography.md"},
+        {title="Color schemes", path="topics/schemes.md"},
+    ]}
+]
+```
