@@ -4,7 +4,7 @@ Styling is handled with HTML templating and regular web design.
 
 ## Templates
 
-Anything in the `/templates/` directory is treated as a [Jinja template](https://jinja.palletsprojects.com/en/stable/templates/), and is used to render pages, rather than being served directly. You can override templates locally and adapt them to make layout changes.
+Anything in the `/templates/` directory is treated as a [Jinja template](https://jinja.palletsprojects.com/en/stable/templates/), and is used to render markdown pages. You can override templates locally and adapt them to make layout changes.
 
 The base template for rendering markdown pages is **`templates/base.html`**. 
 

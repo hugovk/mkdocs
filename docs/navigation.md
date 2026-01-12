@@ -37,7 +37,7 @@ Back to the [homepage](../index.md).
 
 You can include site-wide navigation by using the `mkdocs.toml` configuration.
 
-```
+```toml
 [mkdocs]
 version = 2
 
@@ -56,7 +56,7 @@ This allows the theme to display navigation controls, as well as including `← 
 
 The navigation configuration can also include nested elements.
 
-```
+```toml
 [mkdocs]
 version = 2
 
