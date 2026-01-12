@@ -1,5 +1,7 @@
+# import io
 import pathlib
 import typing
+# import zipfile
 
 import httpx
 import jinja2
@@ -110,6 +112,32 @@ class Package(Handler):
         return f'<Package {self._pkg!r}>'
 
 
+# class ZipURL(Handler):
+#     def __init__(self, url: str) -> None:
+#         self._url = url
+#         self._topdir = ''
+
+#     def load_paths(self) -> list[pathlib.Path]:
+#         r = httpx.get(self._url)
+#         b = io.BytesIO(r.body)
+#         with zipfile.ZipFile(b, 'r') as zip_ref:
+#             names = [
+#                 pathlib.PosixPath(name) for name in zip_ref.namelist()
+#                 if not name.endswith('/')
+#             ]
+#             if len(set([name.parts[0] for name in names])) == 1:
+#                 self._topdir = names[0].parts[0]
+#                 names = [pathlib.PosixPath(*name.parts[1:]) for name in names]
+#         return names
+
+#     def read(self, path: pathlib.Path) -> bytes:
+#         r = httpx.get(self._url)
+#         b = io.BytesIO(r.body)
+#         with zipfile.ZipFile(b, 'r') as zip_ref:
+#             path = f"{self._topdir}/{path}" if self._topdir else path
+#             with zip_ref.open(str(path)) as f:
+#                 return f.read()
+
 # Resources & Templates...
 
 class Resource:
@@ -157,7 +185,9 @@ class TemplateLoader(jinja2.BaseLoader):
 
 
 class MkDocs:
-    def __init__(self):
+    def __init__(self, config: str = '', theme: str = ''):
+        self.config = config or 'mkdocs.toml'
+        self.theme = theme
         self.content_types = {
             ".json": "application/json",
             ".js": "application/javascript",
@@ -175,7 +205,7 @@ class MkDocs:
             # 'index.html' -> '/'
             return pathlib.Path('/').joinpath(path).parent.as_posix().lower()
         if path.name.lower() in ('readme.md', 'index.md', 'index.html'):
-            # 'topics/README.md' -> '/'
+            # 'topics/README.md' -> '/topics/'
             # 'topics/index.html' -> '/topics/'
             return pathlib.Path('/').joinpath(path).parent.as_posix().lower() + '/'
         elif path.suffix == '.md':
@@ -196,12 +226,12 @@ class MkDocs:
         except tomllib.TOMLDecodeError as exc:
             raise ConfigError(f"Invalid TOML in config '{filename}'\n{exc}")
 
-        if 'mkdocs' not in config:
-            raise ConfigError(f"Config '{filename}' missing '[mkdocs]' section.")
-        if 'version' not in config['mkdocs']:
-            raise ConfigError(f"Config '{filename}' missing 'version=...' in '[mkdocs]' section.")
-        if config['mkdocs']['version'] != 2:
-            raise ConfigError(f"Config '{filename}' expected 'version=2' in '[mkdocs]' section.")
+        # if 'mkdocs' not in config:
+        #     raise ConfigError(f"Config '{filename}' missing '[mkdocs]' section.")
+        # if 'version' not in config['mkdocs']:
+        #     raise ConfigError(f"Config '{filename}' missing 'version=...' in '[mkdocs]' section.")
+        # if config['mkdocs']['version'] != 2:
+        #     raise ConfigError(f"Config '{filename}' expected 'version=2' in '[mkdocs]' section.")
 
         default = {
             'mkdocs': {
@@ -211,19 +241,13 @@ class MkDocs:
                 'title': 'MkDocs',
                 'favicon': '📘',
                 'nav': [],
-                # 'nav': [
-                #     {'title': 'Introduction', 'path': 'README.md'},
-                #     {'title': 'Writing content', 'path': 'writing.md'},
-                #     {'title': 'Site navigation', 'path': 'navigation.md'},
-                #     {'title': 'Themes & styling', 'path': 'styling.md'},
-                # ],
             },
             # 'handlers': [
             #     {'type': 'mkdocs.Package', 'pkg': 'mkdocs:theme'}
             #     {'type': 'mkdocs.Directory', 'dir': 'docs'}
             # ],
             'markdown': {
-                'extensions': {
+                'extensions': [
                     'fenced_code',
                     'footnotes',
                     'tables',
@@ -233,7 +257,7 @@ class MkDocs:
                     'mkdocs.rewrite_urls',
                     'mkdocs.short_codes',
                     'mkdocs.strike_thru',
-                },
+                ],
                 'configs': {
                     'footnotes': {'BACKLINK_TITLE': ''},
                     'toc': {'anchorlink': True, 'marker': ''}
@@ -246,6 +270,11 @@ class MkDocs:
         return Config(config, filename=filename)
 
     def load_handlers(self, config: dict) -> list[Handler]:
+        if not pathlib.Path('docs').is_dir():
+            return [
+                Package('mkdocs'),
+                Directory('.'),
+            ]
         return [
             Package('mkdocs'),
             Directory('docs'),
