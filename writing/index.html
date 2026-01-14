@@ -1,0 +1,256 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MkDocs</title>
+        <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 100 100&#34;&gt;&lt;text y=&#34;.9em&#34; font-size=&#34;90&#34;&gt;📘&lt;/text&gt;&lt;/svg&gt;">
+        <link rel="stylesheet" href="/css/highlightjs.min.css">
+        <link rel="stylesheet" href="/css/highlightjs-copy.min.css">
+        <link rel="stylesheet" href="/css/theme.css">
+        <script src="/js/highlightjs.min.js"></script>
+        <script src="/js/highlightjs-copy.min.js"></script>
+        <script src="/js/theme.js"></script>
+    </head>
+    <body>
+        <nav class="left">
+            <ul>
+<li><a href="../">Introduction</a></li>
+<li><a class="active" href=".">Writing Markdown</a></li>
+<li><a href="../navigation/">Site Navigation</a></li>
+<li><a href="../styling/">HTML Styling</a></li>
+</ul>
+        </nav>
+        <nav class="right">
+            <div class="toc">
+<ul>
+<li><a href="#writing-markdown">Writing Markdown</a><ul>
+<li><a href="#headings">Headings</a></li>
+<li><a href="#formatting">Formatting</a></li>
+<li><a href="#lists">Lists</a></li>
+<li><a href="#ordered-lists">Ordered Lists</a></li>
+<li><a href="#links">Links</a></li>
+<li><a href="#section-links">Section links</a></li>
+<li><a href="#relative-links">Relative Links</a></li>
+<li><a href="#images">Images</a></li>
+<li><a href="#inline-code">Inline Code</a></li>
+<li><a href="#code-block">Code Block</a></li>
+<li><a href="#horizontal-rule">Horizontal Rule</a></li>
+<li><a href="#table">Table</a></li>
+<li><a href="#footnotes">Footnotes</a></li>
+<li><a href="#blockquote">Blockquote</a></li>
+<li><a href="#alerts">Alerts</a></li>
+<li><a href="#emoji">Emoji</a></li>
+<li><a href="#task-list">Task List</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+        </nav>
+        <main>
+            <h1 id="writing-markdown"><a class="toclink" href="#writing-markdown">Writing Markdown</a></h1>
+<p>MkDocs supports regular Markdown syntax with some Github Flavored Markdown extensions.</p>
+<p>For other references on writing in Markdown, see the <a href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax">GitHub documentation</a>, the <a href="https://www.markdownguide.org/">Markdown Guide</a>, or the author's <a href="https://daringfireball.net/projects/markdown/">original documentation</a>.</p>
+<p>The rest of this page provides a reference guide to the supported markdown syntax.</p>
+<h2 id="headings"><a class="toclink" href="#headings">Headings</a></h2>
+<pre><code class="language-markdown"># H1
+## H2
+### H3
+#### H4
+##### H5
+</code></pre>
+<h1>H1</h1>
+<h2>H2</h2>
+<h3>H3</h3>
+<h4>H4</h4>
+<h5>H5</h5>
+
+<h2 id="formatting"><a class="toclink" href="#formatting">Formatting</a></h2>
+<pre><code class="language-markdown">* **Bold text**
+* *Italic text*
+* ~~Strikethrough~~
+* &lt;ins&gt;Underlined&lt;/ins&gt;
+* e &lt;sup&gt;i π&lt;/sup&gt; = -1
+* H&lt;sub&gt;2&lt;/sub&gt;O
+</code></pre>
+<p><span></span></p>
+<ul>
+<li><strong>Bold text</strong></li>
+<li><em>Italic text</em></li>
+<li><del>Strikethrough</del></li>
+<li><ins>Underlined</ins></li>
+<li>e <sup>i π</sup> = -1</li>
+<li>H<sub>2</sub>O</li>
+</ul>
+<h2 id="lists"><a class="toclink" href="#lists">Lists</a></h2>
+<pre><code class="language-markdown">- First item
+- Second item
+- Third item
+</code></pre>
+<p><span></span></p>
+<ul>
+<li>First item</li>
+<li>Second item</li>
+<li>Third item</li>
+</ul>
+<h2 id="ordered-lists"><a class="toclink" href="#ordered-lists">Ordered Lists</a></h2>
+<pre><code class="language-markdown">1. First item
+2. Second item
+3. Third item
+</code></pre>
+<p><span></span></p>
+<ol>
+<li>First item</li>
+<li>Second item</li>
+<li>Third item</li>
+</ol>
+<h2 id="links"><a class="toclink" href="#links">Links</a></h2>
+<pre><code class="language-markdown">See [wikipedia](https://www.wikipedia.org/).
+</code></pre>
+<p>See <a href="https://www.wikipedia.org/">wikipedia</a>.</p>
+<h2 id="section-links"><a class="toclink" href="#section-links">Section links</a></h2>
+<pre><code class="language-markdown">See the [Links](#links) section.
+</code></pre>
+<p>See the <a href="#links">Links</a> section.</p>
+<h2 id="relative-links"><a class="toclink" href="#relative-links">Relative Links</a></h2>
+<pre><code class="language-markdown">Back to the [Homepage](index.md).
+</code></pre>
+<p>Back to the <a href="../">Homepage</a>.</p>
+<h2 id="images"><a class="toclink" href="#images">Images</a></h2>
+<pre><code class="language-markdown">![coder cat](img/codercat.png)
+</code></pre>
+<p><img alt="coder cat" src="../img/codercat.png" /></p>
+<h2 id="inline-code"><a class="toclink" href="#inline-code">Inline Code</a></h2>
+<pre><code class="language-markdown">`&amp;mdash;`
+</code></pre>
+<p><code>&amp;mdash;</code></p>
+<h2 id="code-block"><a class="toclink" href="#code-block">Code Block</a></h2>
+<pre><code class="language-markdown hljs">```json
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "age": 25
+}
+```</code></pre>
+
+<p><span></span></p>
+<pre><code class="language-json">{
+  &quot;firstName&quot;: &quot;John&quot;,
+  &quot;lastName&quot;: &quot;Smith&quot;,
+  &quot;age&quot;: 25
+}
+</code></pre>
+<h2 id="horizontal-rule"><a class="toclink" href="#horizontal-rule">Horizontal Rule</a></h2>
+<pre><code class="language-markdown">---
+</code></pre>
+<hr />
+<p><br/></p>
+<h2 id="table"><a class="toclink" href="#table">Table</a></h2>
+<pre><code class="language-markdown">| Syntax    | Description |
+| --------- | ----------- |
+| Header    | Title       |
+| Paragraph | Text        |
+</code></pre>
+<p><span></span></p>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Header</td>
+<td>Title</td>
+</tr>
+<tr>
+<td>Paragraph</td>
+<td>Text</td>
+</tr>
+</tbody>
+</table>
+<h2 id="footnotes"><a class="toclink" href="#footnotes">Footnotes</a></h2>
+<pre><code class="language-markdown">Here's a sentence with a footnote. [^1]
+
+[^1]: This is the footnote from earlier.
+</code></pre>
+<p>Here's a sentence with a footnote. <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<h2 id="blockquote"><a class="toclink" href="#blockquote">Blockquote</a></h2>
+<pre><code class="language-markdown">&gt; Rumors of my death have been greatly exaggerated.
+</code></pre>
+<blockquote>
+<p>Rumors of my death have been greatly exaggerated.</p>
+</blockquote>
+<h2 id="alerts"><a class="toclink" href="#alerts">Alerts</a></h2>
+<pre><code class="language-markdown">&gt; [!NOTE]
+&gt; Useful information that users should know, even when skimming content.
+</code></pre>
+<blockquote>
+<p>[!NOTE]
+Useful information that users should know, even when skimming content.</p>
+</blockquote>
+<pre><code class="language-markdown">&gt; [!TIP]
+&gt; Helpful advice for doing things better or more easily.
+</code></pre>
+<blockquote>
+<p>[!TIP]
+Helpful advice for doing things better or more easily.</p>
+</blockquote>
+<pre><code class="language-markdown">&gt; [!IMPORTANT]
+&gt; Key information users need to know to achieve their goal.
+</code></pre>
+<blockquote>
+<p>[!IMPORTANT]
+Key information users need to know to achieve their goal.</p>
+</blockquote>
+<pre><code class="language-markdown">&gt; [!WARNING]
+&gt; Urgent info that needs immediate user attention to avoid problems.
+</code></pre>
+<blockquote>
+<p>[!WARNING]
+Urgent info that needs immediate user attention to avoid problems.</p>
+</blockquote>
+<pre><code class="language-markdown">&gt; [!CAUTION]
+&gt; Advises about risks or negative outcomes of certain actions.
+</code></pre>
+<blockquote>
+<p>[!CAUTION]
+Advises about risks or negative outcomes of certain actions.</p>
+</blockquote>
+<h2 id="emoji"><a class="toclink" href="#emoji">Emoji</a></h2>
+<pre><code class="language-markdown">:+1: This PR looks great :heart:
+</code></pre>
+<p><span>👍🏼</span> This PR looks great <span>❤️</span></p>
+<h2 id="task-list"><a class="toclink" href="#task-list">Task List</a></h2>
+<pre><code class="language-markdown">- [x] Write the press release
+- [ ] Update the website
+- [ ] Contact the media
+</code></pre>
+<p><span></span></p>
+<ul>
+<li>[x] Write the press release</li>
+<li>[ ] Update the website</li>
+<li>[ ] Contact the media</li>
+</ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>This is the footnote from earlier.&#160;<a class="footnote-backref" href="#fnref:1" title="">&#8617;</a></p>
+</li>
+</ol>
+</div>
+            
+<div class="pagination">
+    
+    <a class="previous" href="../">← Introduction</a>
+    
+    
+    <a class="next" href="../navigation/">Site Navigation →</a>
+    
+</div>
+
+        </main>
+    </body>
+</html>
