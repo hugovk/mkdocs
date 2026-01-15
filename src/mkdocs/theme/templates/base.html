@@ -4,12 +4,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{ config.site.title }}</title>
         <link rel="icon" href="data:image/svg+xml,{% include 'favicon.svg' %}">
-        <link rel="stylesheet" href="/css/highlightjs.min.css">
-        <link rel="stylesheet" href="/css/highlightjs-copy.min.css">
-        <link rel="stylesheet" href="/css/theme.css">
-        <script src="/js/highlightjs.min.js"></script>
-        <script src="/js/highlightjs-copy.min.js"></script>
-        <script src="/js/theme.js"></script>
+        <link rel="stylesheet" href="{{ '/css/highlightjs.min.css' | url }}">
+        <link rel="stylesheet" href="{{ '/css/highlightjs-copy.min.css' | url }}">
+        <link rel="stylesheet" href="{{ '/css/theme.css' | url }}">
+        <script src="{{ '/js/highlightjs.min.js' | url }}"></script>
+        <script src="{{ '/js/highlightjs-copy.min.js' | url }}"></script>
+        <script src="{{ '/js/theme.js' | url }}"></script>
     </head>
     <body>
         <nav class="left">

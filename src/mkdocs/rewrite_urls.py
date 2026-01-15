@@ -12,6 +12,7 @@ page_context = contextvars.ContextVar('page_context')
 def joinpath(x: pathlib.Path, y: pathlib.Path):
     return pathlib.Path(os.path.normpath(x.joinpath(y)))
 
+
 class PageContext:
     def __init__(self, path: pathlib.Path, path_to_url: dict[pathlib.Path, str], relative: bool):
         self.path = path

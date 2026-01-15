@@ -1,7 +1,6 @@
-# import io
 import pathlib
+import posixpath
 import typing
-# import zipfile
 
 import httpx
 import jinja2
@@ -10,6 +9,13 @@ import tomllib
 import importlib.resources
 
 from .rewrite_urls import PageContext
+
+
+@jinja2.pass_context
+def url(ctx, url_to):
+    url_from = ctx['resource'].url
+    url_rel = posixpath.relpath(url_to, url_from)
+    return url_rel
 
 
 # Config...
@@ -295,7 +301,9 @@ class MkDocs:
 
     def load_env(self, templates: list[Template]) -> jinja2.Environment:
         loader = TemplateLoader(templates)
-        return jinja2.Environment(loader=loader, auto_reload=True)
+        env = jinja2.Environment(loader=loader, auto_reload=True)
+        env.filters['url'] = url
+        return env
 
     def load_md(self, config) -> markdown.Markdown:
         return markdown.Markdown(
@@ -325,9 +333,8 @@ class MkDocs:
             with PageContext(resource.path, mapping, relative=True):
                 page_text = resource.read().decode('utf-8')
                 page_html = md.reset().convert(page_text)
-
             base = env.get_template('base.html')
-            return base.render(content=page_html, nav=nav_html, toc=md.toc, config=config, page=page).encode('utf-8')
+            return base.render(content=page_html, nav=nav_html, toc=md.toc, config=config, page=page, resource=resource).encode('utf-8')
         return resource.read()
 
     # Commands...
