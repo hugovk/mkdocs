@@ -3,7 +3,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>MkDocs</title>
-        <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 100 100&#34;&gt;&lt;text y=&#34;.9em&#34; font-size=&#34;90&#34;&gt;📘&lt;/text&gt;&lt;/svg&gt;">
+        <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;📘&lt;/text&gt;&lt;/svg&gt;">
         <link rel="stylesheet" href="../css/highlightjs.min.css">
         <link rel="stylesheet" href="../css/highlightjs-copy.min.css">
         <link rel="stylesheet" href="../css/theme.css">
@@ -25,7 +25,8 @@
 <ul>
 <li><a href="#html-styling">HTML Styling</a><ul>
 <li><a href="#templates">Templates</a></li>
-<li><a href="#media">Media</a></li>
+<li><a href="#pages">Pages</a></li>
+<li><a href="#statics">Statics</a></li>
 </ul>
 </li>
 </ul>
@@ -42,39 +43,128 @@
     &lt;head&gt;
         &lt;meta charset=&quot;utf-8&quot;&gt;
         &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-        &lt;title&gt;{{ config['site']['title'] }}&lt;/title&gt;
-        &lt;link rel=&quot;icon&quot; href=&quot;data:image/svg+xml,{% include 'favicon.svg' %}&quot;&gt;
-        &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/highlightjs.min.css&quot;&gt;
-        &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/highlightjs-copy.min.css&quot;&gt;
-        &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/theme.css&quot;&gt;
-        &lt;script src=&quot;/js/highlightjs.min.js&quot;&gt;&lt;/script&gt;
-        &lt;script src=&quot;/js/highlightjs-copy.min.js&quot;&gt;&lt;/script&gt;
-        &lt;script src=&quot;/js/theme.js&quot;&gt;&lt;/script&gt;
+        &lt;title&gt;{{ config.site.title }}&lt;/title&gt;
+        &lt;link rel=&quot;icon&quot; href=&quot;data:image/svg+xml,&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; viewBox=&amp;quot;0 0 100 100&amp;quot;&amp;gt;&amp;lt;text y=&amp;quot;.9em&amp;quot; font-size=&amp;quot;90&amp;quot;&amp;gt;{{ config['site']['favicon'] }}&amp;lt;/text&amp;gt;&amp;lt;/svg&amp;gt;&quot;&gt;
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ '/css/highlightjs.min.css' | url }}&quot;&gt;
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ '/css/highlightjs-copy.min.css' | url }}&quot;&gt;
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ '/css/theme.css' | url }}&quot;&gt;
+        &lt;script src=&quot;{{ '/js/highlightjs.min.js' | url }}&quot;&gt;&lt;/script&gt;
+        &lt;script src=&quot;{{ '/js/highlightjs-copy.min.js' | url }}&quot;&gt;&lt;/script&gt;
+        &lt;script src=&quot;{{ '/js/theme.js' | url }}&quot;&gt;&lt;/script&gt;
     &lt;/head&gt;
     &lt;body&gt;
         &lt;nav class=&quot;left&quot;&gt;
-            {{ nav }}
+            {{ nav.html }}
         &lt;/nav&gt;
         &lt;nav class=&quot;right&quot;&gt;
-            {{ toc }}
+            {{ page.toc }}
         &lt;/nav&gt;
         &lt;main&gt;
-            {{ content }}
-            {% include &quot;pagination.html&quot; %}
+            {{ page.html }}
+            {% if nav.previous or nav.next %}
+            &lt;div class=&quot;pagination&quot;&gt;
+                {% if nav.previous %}
+                &lt;a class=&quot;previous&quot; href=&quot;{{ nav.previous.url }}&quot;&gt;← {{ nav.previous.title }}&lt;/a&gt;
+                {% endif %}
+                {% if nav.next %}
+                &lt;a class=&quot;next&quot; href=&quot;{{ nav.next.url }}&quot;&gt;{{ nav.next.title }} →&lt;/a&gt;
+                {% endif %}
+            &lt;/div&gt;
+            {% endif %}
         &lt;/main&gt;
     &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-<p>The following templates are included in <a href="https://github.com/encode/mkdocs/blob/main/src/mkdocs/theme/">the default theme</a>...</p>
+<p>The following template is included in <a href="https://github.com/encode/mkdocs/blob/main/src/mkdocs/theme/">the default theme</a>...</p>
 <ul>
 <li><code>templates/base.html</code>- The base template used for rendering markdown pages.</li>
-<li><code>templates/favicon.svg</code> - an SVG used for the favicon, that displays the <code>config['site']['favicon']</code> emoji.</li>
-<li><code>templates/pagination.html</code> - Included by the base template. Renders next and previous page controls.</li>
 </ul>
-<h2 id="media"><a class="toclink" href="#media">Media</a></h2>
-<p>Any files that are not Markdown pages <code>*.md</code>, or templates <code>/templates/*</code>, are treated as media documents and are included in the website without modification.</p>
+<p>The following context is passed to the template rendering...</p>
+<table>
+<thead>
+<tr>
+<th><em>Variable</em></th>
+<th><em>Description</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>page</code></td>
+<td>The markdown page.</td>
+</tr>
+<tr>
+<td><code>page.html</code></td>
+<td>The page contents, rendered as HTML.</td>
+</tr>
+<tr>
+<td><code>page.text</code></td>
+<td>The text of the page, as markdown.</td>
+</tr>
+<tr>
+<td><code>page.path</code></td>
+<td>The path of the source file.</td>
+</tr>
+<tr>
+<td><code>page.url</code></td>
+<td>The URL from which the page is served.</td>
+</tr>
+<tr>
+<td><code>page.toc</code></td>
+<td>The table of contents for the page, as HTML.</td>
+</tr>
+<tr>
+<td><code>nav</code></td>
+<td>The site navigation.</td>
+</tr>
+<tr>
+<td><code>nav.html</code></td>
+<td>The site navigation, rendered into HTML.</td>
+</tr>
+<tr>
+<td><code>nav.previous</code></td>
+<td>The previous page, as configured in the nav.</td>
+</tr>
+<tr>
+<td><code>nav.previous.title</code></td>
+<td>The title of the previous page.</td>
+</tr>
+<tr>
+<td><code>nav.previous.url</code></td>
+<td>The url of the previous page.</td>
+</tr>
+<tr>
+<td><code>nav.next</code></td>
+<td>The next page, as configured in the nav.</td>
+</tr>
+<tr>
+<td><code>nav.next.title</code></td>
+<td>The title of the next page.</td>
+</tr>
+<tr>
+<td><code>nav.next.url</code></td>
+<td>The url of the next page.</td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td>The <code>mkdocs.toml</code> configuration.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pages"><a class="toclink" href="#pages">Pages</a></h2>
+<p>Any files ending with the <code>*.md</code> extension are treated as markdown pages, and rendered into HTML, then included in the base template.</p>
+<p>The following are treated as index pages...</p>
+<ul>
+<li><code>README.md</code> - Served as <code>/</code>.</li>
+<li><code>index.md</code> - Served as <code>/</code>.</li>
+</ul>
+<p>All other pages are lowercased, and served from a URL without the markdown extension...</p>
+<ul>
+<li><code>CONTRIBUTING.md</code> - Served as <code>/contributing/</code>.</li>
+</ul>
+<h2 id="statics"><a class="toclink" href="#statics">Statics</a></h2>
+<p>Any files that are not Markdown pages <code>*.md</code>, or templates <code>/templates/*</code>, are treated as static media and are included in the website without modification.</p>
 <p>This can include images, stylesheets, javascript, fonts, video and audio.</p>
-<p>The default theme includes the following media documents...</p>
+<p>The default theme includes the following static media...</p>
 <ul>
 <li><a href="../css/theme.css"><code>css/theme.css</code></a></li>
 <li><a href="../css/highlightjs.min.css"><code>css/highlightjs.min.css</code></a></li>
@@ -83,15 +173,14 @@
 <li><a href="../js/highlightjs.min.js"><code>js/highlightjs.min.js</code></a></li>
 <li><a href="../js/highlightjs-copy.min.js"><code>js/highlightjs-copy.min.js</code></a></li>
 </ul>
-<p>You can override these locally to style the color scheme, the typography &amp; layout, or to adapt the <code>highlight.js</code> code highlighting.</p>
             
-<div class="pagination">
-    
-    <a class="previous" href="../navigation/">← Site Navigation</a>
-    
-    
-</div>
-
+            <div class="pagination">
+                
+                <a class="previous" href="../navigation/">← Site Navigation</a>
+                
+                
+            </div>
+            
         </main>
     </body>
 </html>
