@@ -1,7 +1,4 @@
 [mkdocs]
-version = 2
-
-[site]
 title = "MkDocs"
 favicon = "📘"
 nav = [

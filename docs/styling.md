@@ -13,43 +13,84 @@ The base template for rendering markdown pages is **`templates/base.html`**.
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ config['site']['title'] }}</title>
-        <link rel="icon" href="data:image/svg+xml,{% include 'favicon.svg' %}">
-        <link rel="stylesheet" href="/css/highlightjs.min.css">
-        <link rel="stylesheet" href="/css/highlightjs-copy.min.css">
-        <link rel="stylesheet" href="/css/theme.css">
-        <script src="/js/highlightjs.min.js"></script>
-        <script src="/js/highlightjs-copy.min.js"></script>
-        <script src="/js/theme.js"></script>
+        <title>{{ config.site.title }}</title>
+        <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;{{ config['site']['favicon'] }}&lt;/text&gt;&lt;/svg&gt;">
+        <link rel="stylesheet" href="{{ '/css/highlightjs.min.css' | url }}">
+        <link rel="stylesheet" href="{{ '/css/highlightjs-copy.min.css' | url }}">
+        <link rel="stylesheet" href="{{ '/css/theme.css' | url }}">
+        <script src="{{ '/js/highlightjs.min.js' | url }}"></script>
+        <script src="{{ '/js/highlightjs-copy.min.js' | url }}"></script>
+        <script src="{{ '/js/theme.js' | url }}"></script>
     </head>
     <body>
         <nav class="left">
-            {{ nav }}
+            {{ nav.html }}
         </nav>
         <nav class="right">
-            {{ toc }}
+            {{ page.toc }}
         </nav>
         <main>
-            {{ content }}
-            {% include "pagination.html" %}
+            {{ page.html }}
+            {% if nav.previous or nav.next %}
+            <div class="pagination">
+                {% if nav.previous %}
+                <a class="previous" href="{{ nav.previous.url }}">← {{ nav.previous.title }}</a>
+                {% endif %}
+                {% if nav.next %}
+                <a class="next" href="{{ nav.next.url }}">{{ nav.next.title }} →</a>
+                {% endif %}
+            </div>
+            {% endif %}
         </main>
     </body>
 </html>
 ```
 
-The following templates are included in [the default theme](https://github.com/encode/mkdocs/blob/main/src/mkdocs/theme/)...
+The following template is included in [the default theme](https://github.com/encode/mkdocs/blob/main/src/mkdocs/theme/)...
 
 * `templates/base.html`- The base template used for rendering markdown pages.
-* `templates/favicon.svg` - an SVG used for the favicon, that displays the `config['site']['favicon']` emoji.
-* `templates/pagination.html` - Included by the base template. Renders next and previous page controls.
 
-## Media
+The following context is passed to the template rendering...
 
-Any files that are not Markdown pages `*.md`, or templates `/templates/*`, are treated as media documents and are included in the website without modification.
+
+*Variable*           | *Description*
+---------------------|--------------------------------------
+`page`               | The markdown page.
+`page.html`          | The page contents, rendered as HTML.
+`page.text`          | The text of the page, as markdown.
+`page.path`          | The path of the source file.
+`page.url`           | The URL from which the page is served.
+`page.toc`           | The table of contents for the page, as HTML.
+`nav`                | The site navigation.
+`nav.html`           | The site navigation, rendered into HTML.
+`nav.previous`       | The previous page, as configured in the nav.
+`nav.previous.title` | The title of the previous page.
+`nav.previous.url`   | The url of the previous page.
+`nav.next`           | The next page, as configured in the nav.
+`nav.next.title`     | The title of the next page.
+`nav.next.url`       | The url of the next page.
+`config`             | The `mkdocs.toml` configuration.
+
+## Pages
+
+Any files ending with the `*.md` extension are treated as markdown pages, and rendered into HTML, then included in the base template.
+
+The following are treated as index pages...
+
+* `README.md` - Served as `/`.
+* `index.md` - Served as `/`.
+
+All other pages are lowercased, and served from a URL without the markdown extension...
+
+* `CONTRIBUTING.md` - Served as `/contributing/`.
+
+## Statics
+
+Any files that are not Markdown pages `*.md`, or templates `/templates/*`, are treated as static media and are included in the website without modification.
 
 This can include images, stylesheets, javascript, fonts, video and audio.
 
-The default theme includes the following media documents...
+The default theme includes the following static media...
 
 * [`css/theme.css`](css/theme.css)
 * [`css/highlightjs.min.css`](css/highlightjs.min.css)
@@ -57,5 +98,3 @@ The default theme includes the following media documents...
 * [`js/theme.js`](js/theme.js)
 * [`js/highlightjs.min.js`](js/highlightjs.min.js)
 * [`js/highlightjs-copy.min.js`](js/highlightjs-copy.min.js)
-
-You can override these locally to style the color scheme, the typography & layout, or to adapt the `highlight.js` code highlighting.

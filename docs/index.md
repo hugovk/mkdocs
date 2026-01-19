@@ -7,7 +7,7 @@ MkDocs is a smart, simple, website design tool.
 Install the `mkdocs` command line tool...
 
 ```shell
-$ pip install mkdocs
+$ pip install git+https://github.com/encode/mkdocs.git
 ```
 
 ## Getting started

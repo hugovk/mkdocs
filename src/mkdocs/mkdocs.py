@@ -11,13 +11,6 @@ import importlib.resources
 from .rewrite_urls import PageContext
 
 
-@jinja2.pass_context
-def url(ctx, url_to):
-    url_from = ctx['resource'].url
-    url_rel = posixpath.relpath(url_to, url_from)
-    return url_rel
-
-
 # Config...
 
 class Config:
@@ -42,6 +35,23 @@ class Config:
 
 class ConfigError(Exception):
     pass
+
+
+class Page:
+    def __init__(self, text: str, html: str, toc: str, title: str, url: str, path: str):
+        self.text = text  # The markdown text
+        self.html = html  # The rendered html
+        self.toc = toc    # The HTML table of contents
+        self.title = title
+        self.url = url
+        self.path = path
+
+
+class Nav:
+    def __init__(self, html: str, previous, next):
+        self.html = html  # The HTML nav menu
+        self.previous = previous
+        self.next = next
 
 
 # Handlers...
@@ -178,11 +188,37 @@ class Template:
         return f'<Template {self.name!r}>'
 
 
+###############################################################################
+# Jinja2 configuration...
+
+@jinja2.pass_context
+def url(ctx, url_to):
+    """
+    The 'url' filter is used in HTML templates to ensure that
+    static media is referenced relative to the active page.
+
+    Example usage:
+
+    <link rel="stylesheet" href="{{ '/css/theme.css' | url }}">
+
+    The resulting link will be a relative link, allowing sites to
+    be deployed either at the root domain Eg. `https://www.example.com/`,
+    or on a subdirectory. Eg. `https://www.example.com/project/`
+    """
+    url_from = ctx['page'].url
+    url_rel = posixpath.relpath(url_to, url_from)
+    return url_rel
+
+
 class TemplateLoader(jinja2.BaseLoader):
+    """
+    A Jinja2 template loader that uses whichever Templates are
+    loaded by the MkDocs configuration.
+    """
     def __init__(self, templates: list[Template]):
         self.templates = templates
 
-    def get_source(self, environment, template: str):
+    def get_source(self, environment: jinja2.Environment, template: str):
         for t in self.templates:
             if t.name == template:
                 source = t.read().decode('utf-8')
@@ -190,20 +226,29 @@ class TemplateLoader(jinja2.BaseLoader):
         raise jinja2.TemplateNotFound(template)
 
 
+###############################################################################
+# A mapping of file extensions to content types.
+# TODO: Expand this to use the same defaults as nginx...
+# https://github.com/nginx/nginx/blob/master/conf/mime.types
+
+CONTENT_TYPES = {
+    ".json": "application/json",
+    ".js": "application/javascript",
+    ".html": "text/html",
+    ".css": "text/css",
+    ".png": "image/png",
+    ".jpeg": "image/jpeg",
+    ".jpg": "image/jpeg",
+    ".gif": "image/gif",
+}
+
+
+###############################################################################
+# Here we go...
+
 class MkDocs:
-    def __init__(self, config: str = '', theme: str = ''):
-        self.config = config or 'mkdocs.toml'
-        self.theme = theme
-        self.content_types = {
-            ".json": "application/json",
-            ".js": "application/javascript",
-            ".html": "text/html",
-            ".css": "text/css",
-            ".png": "image/png",
-            ".jpeg": "image/jpeg",
-            ".jpg": "image/jpeg",
-            ".gif": "image/gif",
-        }
+    def __init__(self):
+        pass
 
     def path_to_url(self, path: pathlib.Path) -> str:
         if str(path).lower() in ('readme.md', 'index.md', 'index.html'):
@@ -232,18 +277,8 @@ class MkDocs:
         except tomllib.TOMLDecodeError as exc:
             raise ConfigError(f"Invalid TOML in config '{filename}'\n{exc}")
 
-        # if 'mkdocs' not in config:
-        #     raise ConfigError(f"Config '{filename}' missing '[mkdocs]' section.")
-        # if 'version' not in config['mkdocs']:
-        #     raise ConfigError(f"Config '{filename}' missing 'version=...' in '[mkdocs]' section.")
-        # if config['mkdocs']['version'] != 2:
-        #     raise ConfigError(f"Config '{filename}' expected 'version=2' in '[mkdocs]' section.")
-
         default = {
             'mkdocs': {
-                'version': 2
-            },
-            'site': {
                 'title': 'MkDocs',
                 'favicon': '📘',
                 'nav': [],
@@ -326,17 +361,21 @@ class MkDocs:
     def render(self, resource: Resource, resources: list[Resource], config: dict, env: jinja2.Environment, md: markdown.Markdown) -> bytes:
         if resource.path.suffix == '.md':
             mapping = {resource.path: resource.url for resource in resources}
-            with PageContext(resource.path, mapping, relative=False) as page:
-                nav_lines = self.nav_lines(config['site']['nav'])
+            with PageContext(resource.path, mapping, relative=False) as ctx:
+                nav_lines = self.nav_lines(config['mkdocs']['nav'])
                 nav_text = '\n'.join(nav_lines)
                 nav_html = md.reset().convert(nav_text)
+                nav = Nav(html=nav_html, previous=ctx.previous, next=ctx.next)
             with PageContext(resource.path, mapping, relative=True):
-                page_text = resource.read().decode('utf-8')
-                page_html = md.reset().convert(page_text)
+                text = resource.read().decode('utf-8')
+                html = md.reset().convert(text)
+                title = md.toc_tokens[0]['name'] if md.toc_tokens else ''
+                page = Page(text=text, html=html, toc=md.toc, title=title, url=resource.url, path=resource.path)
             base = env.get_template('base.html')
-            return base.render(content=page_html, nav=nav_html, toc=md.toc, config=config, page=page, resource=resource).encode('utf-8')
+            return base.render(page=page, nav=nav, config=config).encode('utf-8')
         return resource.read()
 
+    ###########################################################################
     # Commands...
 
     def build(self):
@@ -377,7 +416,7 @@ class MkDocs:
                 not_found = httpx.Text('Not Found')
                 return httpx.Response(404, content=not_found)
             content = self.render(resource, resources, config, env, md)
-            content_type = self.content_types.get(resource.output_path.suffix)
+            content_type = CONTENT_TYPES.get(resource.output_path.suffix)
             return httpx.Response(200, headers={'Content-Type': content_type}, content=content)
 
         httpx.run(app)
