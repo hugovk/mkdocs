@@ -1,49 +1,41 @@
-# Site Navigation
+# Interlinking & Navigation
 
-When building sites with multiple pages, use `index.md` or `README.md` for root URLs.
-
-| **File**            | **URL** |
-|-----------------|-----|
-| `index.md`      | `/`
-| `markdown.md`   | `/markdown/`
-| `navigation.md` | `/navigation/`
-| `styling.md`    | `/styling/`
-
-Pages should use the `.md` file extension in order to be rendered as markdown. Other documents are served unmodified as [media files](styling.md#media).
+Navigation within your documentation is handled by using [document interlinking](#interlinking), and optional [site-wide navigation](#navigation).
 
 ## Interlinking
 
-Use relative interlinking to help users navigate between documents.
+Use relative markdown links to allow users to navigate between documents.
 
-Link to another markdown file in the same directory&hellip;
+For example, a website with `README.md` and `CONTRIBUTING.md` pages, might include the following&hellip;
 
 ```markdown
 See our [contribution documentation](CONTRIBUTING.md) for more details on getting involved.
 ```
 
-Link to a document in a subdirectory&hellip;
+If your site includes pages within a directory structure, the page interlinking might include navigation between directories.
+
+For example, a link from `index.md` to `tutorial/getting-started.md`&hellip;
 
 ```markdown
 The [tutorial](tutorial/getting-started.md) will help get you started.
 ```
 
-Link to a document in a parent directory&hellip;
+And a corresponding link from `tutorial/getting-started.md` back to `index.md`&hellip;
 
 ```markdown
 Back to the [homepage](../index.md).
 ```
 
-## Configuration
+Links can either use the markdown inline style, as above, or the reference style.
+
+## Navigation
 
 You can include site-wide navigation by using the `mkdocs.toml` configuration.
 
+This is typically used by the HTML styling to include a navigation menu.
+
 ```toml
 [mkdocs]
-version = 2
-
-[site]
-title = "MkDocs"
-favicon = "📘"
 nav = [
     {title="Introduction", path="index.md"},
     {title="Writing Markdown", path="markdown.md"},
@@ -58,11 +50,6 @@ The navigation configuration can also include nested elements.
 
 ```toml
 [mkdocs]
-version = 2
-
-[site]
-title = "MkDocs"
-favicon = "📘"
 nav = [
     {title="Introduction", path="index.md"},
     {title="Tutorial", children=[
@@ -77,3 +64,20 @@ nav = [
     ]}
 ]
 ```
+
+## URL Structure
+
+Ensuring your website has a clean, meaningful URL structure is important for navigation.
+
+* Markdown pages are lowercased.
+* The file extension is not included in the URL.
+* Use either `index.md` or `README.md` for root URLs.
+
+Some examples...
+
+| **Markdown Page** | **HTML output**          | **URL**        |
+|-------------------|--------------------------|----------------|
+| `index.md`        | `index.html`             | `/`            |
+| `markdown.md`     | `/markdown/index.html`   | `/markdown/`   |
+| `navigation.md`   | `/navigation/index.html` | `/navigation/` |
+| `styling.md`      | `/styling/index.html`    | `/styling/`    |

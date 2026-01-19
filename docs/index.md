@@ -21,8 +21,8 @@ MkDocs supports [GitHub Flavored Markdown](writing.md) for page authoring.
 ## Adding pages
 
 1. Create additional markdown pages.
-2. Use markdown interlinking between pages.
-3. Create a `mkdocs.toml` config file to define the site navigation.
+2. Use [markdown interlinking](navigation.md#interlinking) between pages.
+3. Create a `mkdocs.toml` config file to define [the site navigation](navigation.md#navigation).
 
 ## Custom styling
 

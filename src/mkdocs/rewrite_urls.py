@@ -19,6 +19,10 @@ class PageContext:
         self.path_to_url = path_to_url
         self.url_to_path = {u: p for p, u in path_to_url.items()}
         self.relative = relative
+        # ...
+        self.current = None
+        self.previous = None
+        self.next = None
 
     def __enter__(self):
         self._token = page_context.set(self)

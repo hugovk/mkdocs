@@ -13,8 +13,8 @@ The base template for rendering markdown pages is **`templates/base.html`**.
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ config.site.title }}</title>
-        <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;{{ config['site']['favicon'] }}&lt;/text&gt;&lt;/svg&gt;">
+        <title>{{ config.mkdocs.title or page.title }}</title>
+        <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;{{ config.mkdocs.favicon or '📘' }}&lt;/text&gt;&lt;/svg&gt;">
         <link rel="stylesheet" href="{{ '/css/highlightjs.min.css' | url }}">
         <link rel="stylesheet" href="{{ '/css/highlightjs-copy.min.css' | url }}">
         <link rel="stylesheet" href="{{ '/css/theme.css' | url }}">
@@ -61,6 +61,7 @@ The following context is passed to the template rendering...
 `page.path`          | The path of the source file.
 `page.url`           | The URL from which the page is served.
 `page.toc`           | The table of contents for the page, as HTML.
+`page.title`         | The first heading in the table of contents.
 `nav`                | The site navigation.
 `nav.html`           | The site navigation, rendered into HTML.
 `nav.previous`       | The previous page, as configured in the nav.
