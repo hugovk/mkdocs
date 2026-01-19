@@ -1,1 +1,0 @@
-{# HTML escaped for inclusion in a `data:` URL #}{% set escaped %}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">{{ config['site']['favicon'] }}</text></svg>{% endset %}{{ escaped | e }}
