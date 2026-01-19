@@ -48,8 +48,9 @@ class Page:
 
 
 class Nav:
-    def __init__(self, html: str, previous, next):
+    def __init__(self, html: str, current, previous, next):
         self.html = html  # The HTML nav menu
+        self.current = current
         self.previous = previous
         self.next = next
 
@@ -362,10 +363,11 @@ class MkDocs:
         if resource.path.suffix == '.md':
             mapping = {resource.path: resource.url for resource in resources}
             with PageContext(resource.path, mapping, relative=False) as ctx:
-                nav_lines = self.nav_lines(config['mkdocs']['nav'])
+                nav_config = config['mkdocs'].get('nav', [])
+                nav_lines = self.nav_lines(nav_config)
                 nav_text = '\n'.join(nav_lines)
                 nav_html = md.reset().convert(nav_text)
-                nav = Nav(html=nav_html, previous=ctx.previous, next=ctx.next)
+                nav = Nav(html=nav_html, current=ctx.current, previous=ctx.previous, next=ctx.next)
             with PageContext(resource.path, mapping, relative=True):
                 text = resource.read().decode('utf-8')
                 html = md.reset().convert(text)
