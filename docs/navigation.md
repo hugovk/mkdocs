@@ -81,3 +81,5 @@ Some examples...
 | `markdown.md`     | `/markdown/index.html`   | `/markdown/`   |
 | `navigation.md`   | `/navigation/index.html` | `/navigation/` |
 | `styling.md`      | `/styling/index.html`    | `/styling/`    |
+
+<br/>
