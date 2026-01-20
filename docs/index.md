@@ -26,8 +26,7 @@ MkDocs supports [GitHub Flavored Markdown](writing.md) for page authoring.
 
 ## Custom styling
 
-1. Create a `templates/base.html` file to customise the layout.
-2. Create a `css/base.css` file to override the default styles.
-3. Create a `js/base.css` file to override the default scripts.
+Styling adaptations can be kept simple, such as customising the colour scheme, or more comprehensive, such as creating an entirely new theme.
 
-Simple [styling adaptations](styling.md) include customising the colour scheme, the typography, or choosing the code highlighting style.
+1. Modify [the HTML templating](styling.md#templates) to customise the layout.
+2. Override or add [CSS and JavaScript](styling.md#statics) static assets.
