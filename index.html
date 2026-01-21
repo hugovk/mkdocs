@@ -2,7 +2,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MkDocs</title>
+        <title>Introduction</title>
         <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;📘&lt;/text&gt;&lt;/svg&gt;">
         <link rel="stylesheet" href="css/highlightjs.min.css">
         <link rel="stylesheet" href="css/highlightjs-copy.min.css">
@@ -16,8 +16,9 @@
             <ul>
 <li><a class="active" href=".">Introduction</a></li>
 <li><a href="writing/">Writing Markdown</a></li>
-<li><a href="navigation/">Site Navigation</a></li>
+<li><a href="navigation/">Interlinking &amp; Navigation</a></li>
 <li><a href="styling/">HTML Styling</a></li>
+<li><a href="roadmap/">Roadmap</a></li>
 </ul>
         </nav>
         <nav class="right">
@@ -37,30 +38,37 @@
         <main>
             <h1 id="mkdocs"><a class="toclink" href="#mkdocs">MkDocs</a></h1>
 <p>MkDocs is a smart, simple, website design tool.</p>
+<p>Documentation available at... <a href="https://www.encode.io/mkdocs/">https://www.encode.io/mkdocs/</a></p>
 <h2 id="installation"><a class="toclink" href="#installation">Installation</a></h2>
 <p>Install the <code>mkdocs</code> command line tool...</p>
-<pre><code class="language-shell">$ pip install mkdocs
+<pre><code class="language-shell">$ pip install git+https://github.com/encode/mkdocs.git
 </code></pre>
+<p>This will install the <em><a href="roadmap/">version 2.0 prelease</a></em>.</p>
 <h2 id="getting-started"><a class="toclink" href="#getting-started">Getting started</a></h2>
-<ol>
-<li>Create a <code>README.md</code> page.</li>
-<li>Run <code>mkdocs serve</code> to view your documentation in a browser.</li>
-<li>Run <code>mkdocs build</code> to build a static website ready to host.</li>
-</ol>
-<p>MkDocs supports <a href="writing/">GitHub Flavored Markdown</a> for page authoring.</p>
+<p>Create a <code>mkdocs.toml</code> config file.</p>
+<pre><code class="language-toml">[mkdocs]
+nav = [
+    {title=&quot;Homepage&quot;, path=&quot;README.md&quot;},
+]
+</code></pre>
+<p>Create a <code>docs/README.md</code> page. <em>MkDocs supports <a href="writing/">GitHub Flavored Markdown</a> for page authoring.</em></p>
+<pre><code class="language-markdown"># MkDocs
+
+Let's get writing.
+</code></pre>
+<p>Run <code>mkdocs serve</code> to view your documentation in a browser.</p>
 <h2 id="adding-pages"><a class="toclink" href="#adding-pages">Adding pages</a></h2>
 <ol>
 <li>Create additional markdown pages.</li>
-<li>Use markdown interlinking between pages.</li>
-<li>Create a <code>mkdocs.toml</code> config file to define the site navigation.</li>
+<li>Use <a href="navigation/#interlinking">markdown interlinking</a> between pages.</li>
+<li>Edit the <code>mkdocs.toml</code> config file to define <a href="navigation/#navigation">the site navigation</a>.</li>
 </ol>
 <h2 id="custom-styling"><a class="toclink" href="#custom-styling">Custom styling</a></h2>
+<p>Styling adaptations can be kept simple, such as customising the colour scheme, or more comprehensive, such as creating an entirely new theme.</p>
 <ol>
-<li>Create a <code>templates/base.html</code> file to customise the layout.</li>
-<li>Create a <code>css/base.css</code> file to override the default styles.</li>
-<li>Create a <code>js/base.css</code> file to override the default scripts.</li>
+<li>Modify <a href="styling/#templates">the HTML templating</a> to customise the layout.</li>
+<li>Override or add <a href="styling/#statics">CSS and JavaScript</a> static assets.</li>
 </ol>
-<p>Simple <a href="styling/">styling adaptations</a> include customising the colour scheme, the typography, or choosing the code highlighting style.</p>
             
             <div class="pagination">
                 

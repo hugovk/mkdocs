@@ -2,7 +2,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MkDocs</title>
+        <title>Interlinking & Navigation</title>
         <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;📘&lt;/text&gt;&lt;/svg&gt;">
         <link rel="stylesheet" href="../css/highlightjs.min.css">
         <link rel="stylesheet" href="../css/highlightjs-copy.min.css">
@@ -16,16 +16,18 @@
             <ul>
 <li><a href="../">Introduction</a></li>
 <li><a href="../writing/">Writing Markdown</a></li>
-<li><a class="active" href=".">Site Navigation</a></li>
+<li><a class="active" href=".">Interlinking &amp; Navigation</a></li>
 <li><a href="../styling/">HTML Styling</a></li>
+<li><a href="../roadmap/">Roadmap</a></li>
 </ul>
         </nav>
         <nav class="right">
             <div class="toc">
 <ul>
-<li><a href="#site-navigation">Site Navigation</a><ul>
+<li><a href="#interlinking-navigation">Interlinking &amp; Navigation</a><ul>
 <li><a href="#interlinking">Interlinking</a></li>
-<li><a href="#configuration">Configuration</a></li>
+<li><a href="#navigation">Navigation</a></li>
+<li><a href="#url-structure">URL Structure</a></li>
 </ul>
 </li>
 </ul>
@@ -33,54 +35,25 @@
 
         </nav>
         <main>
-            <h1 id="site-navigation"><a class="toclink" href="#site-navigation">Site Navigation</a></h1>
-<p>When building sites with multiple pages, use <code>index.md</code> or <code>README.md</code> for root URLs.</p>
-<table>
-<thead>
-<tr>
-<th><strong>File</strong></th>
-<th><strong>URL</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>index.md</code></td>
-<td><code>/</code></td>
-</tr>
-<tr>
-<td><code>markdown.md</code></td>
-<td><code>/markdown/</code></td>
-</tr>
-<tr>
-<td><code>navigation.md</code></td>
-<td><code>/navigation/</code></td>
-</tr>
-<tr>
-<td><code>styling.md</code></td>
-<td><code>/styling/</code></td>
-</tr>
-</tbody>
-</table>
-<p>Pages should use the <code>.md</code> file extension in order to be rendered as markdown. Other documents are served unmodified as <a href="../styling/#media">media files</a>.</p>
+            <h1 id="interlinking-navigation"><a class="toclink" href="#interlinking-navigation">Interlinking &amp; Navigation</a></h1>
+<p>Navigation within your documentation is handled by using <a href="#interlinking">document interlinking</a>, and optional <a href="#navigation">site-wide navigation</a>.</p>
 <h2 id="interlinking"><a class="toclink" href="#interlinking">Interlinking</a></h2>
-<p>Use relative interlinking to help users navigate between documents.</p>
-<p>Link to another markdown file in the same directory&hellip;</p>
+<p>Use relative markdown links to allow users to navigate between documents.</p>
+<p>For example, a website with <code>README.md</code> and <code>CONTRIBUTING.md</code> pages, might include the following&hellip;</p>
 <pre><code class="language-markdown">See our [contribution documentation](CONTRIBUTING.md) for more details on getting involved.
 </code></pre>
-<p>Link to a document in a subdirectory&hellip;</p>
+<p>If your site includes pages within a directory structure, the page interlinking might include navigation between directories.</p>
+<p>For example, a link from <code>index.md</code> to <code>tutorial/getting-started.md</code>&hellip;</p>
 <pre><code class="language-markdown">The [tutorial](tutorial/getting-started.md) will help get you started.
 </code></pre>
-<p>Link to a document in a parent directory&hellip;</p>
+<p>And a corresponding link from <code>tutorial/getting-started.md</code> back to <code>index.md</code>&hellip;</p>
 <pre><code class="language-markdown">Back to the [homepage](../index.md).
 </code></pre>
-<h2 id="configuration"><a class="toclink" href="#configuration">Configuration</a></h2>
+<p>Links can either use the markdown inline style, as above, or the reference style.</p>
+<h2 id="navigation"><a class="toclink" href="#navigation">Navigation</a></h2>
 <p>You can include site-wide navigation by using the <code>mkdocs.toml</code> configuration.</p>
+<p>This is typically used by the HTML styling to include a navigation menu.</p>
 <pre><code class="language-toml">[mkdocs]
-version = 2
-
-[site]
-title = &quot;MkDocs&quot;
-favicon = &quot;📘&quot;
 nav = [
     {title=&quot;Introduction&quot;, path=&quot;index.md&quot;},
     {title=&quot;Writing Markdown&quot;, path=&quot;markdown.md&quot;},
@@ -91,11 +64,6 @@ nav = [
 <p>This allows the theme to display navigation controls, as well as including <code>← previous</code> and <code>next →</code> links.</p>
 <p>The navigation configuration can also include nested elements.</p>
 <pre><code class="language-toml">[mkdocs]
-version = 2
-
-[site]
-title = &quot;MkDocs&quot;
-favicon = &quot;📘&quot;
 nav = [
     {title=&quot;Introduction&quot;, path=&quot;index.md&quot;},
     {title=&quot;Tutorial&quot;, children=[
@@ -110,6 +78,46 @@ nav = [
     ]}
 ]
 </code></pre>
+<h2 id="url-structure"><a class="toclink" href="#url-structure">URL Structure</a></h2>
+<p>Ensuring your website has a clean, meaningful URL structure is important for navigation.</p>
+<ul>
+<li>Markdown pages are lowercased.</li>
+<li>The file extension is not included in the URL.</li>
+<li>Use either <code>index.md</code> or <code>README.md</code> for root URLs.</li>
+</ul>
+<p>Some examples...</p>
+<table>
+<thead>
+<tr>
+<th><strong>Markdown Page</strong></th>
+<th><strong>HTML output</strong></th>
+<th><strong>URL</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>index.md</code></td>
+<td><code>index.html</code></td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td><code>markdown.md</code></td>
+<td><code>/markdown/index.html</code></td>
+<td><code>/markdown/</code></td>
+</tr>
+<tr>
+<td><code>navigation.md</code></td>
+<td><code>/navigation/index.html</code></td>
+<td><code>/navigation/</code></td>
+</tr>
+<tr>
+<td><code>styling.md</code></td>
+<td><code>/styling/index.html</code></td>
+<td><code>/styling/</code></td>
+</tr>
+</tbody>
+</table>
+<p><br/></p>
             
             <div class="pagination">
                 

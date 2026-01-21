@@ -2,7 +2,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MkDocs</title>
+        <title>HTML Styling</title>
         <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;📘&lt;/text&gt;&lt;/svg&gt;">
         <link rel="stylesheet" href="../css/highlightjs.min.css">
         <link rel="stylesheet" href="../css/highlightjs-copy.min.css">
@@ -16,8 +16,9 @@
             <ul>
 <li><a href="../">Introduction</a></li>
 <li><a href="../writing/">Writing Markdown</a></li>
-<li><a href="../navigation/">Site Navigation</a></li>
+<li><a href="../navigation/">Interlinking &amp; Navigation</a></li>
 <li><a class="active" href=".">HTML Styling</a></li>
+<li><a href="../roadmap/">Roadmap</a></li>
 </ul>
         </nav>
         <nav class="right">
@@ -43,8 +44,8 @@
     &lt;head&gt;
         &lt;meta charset=&quot;utf-8&quot;&gt;
         &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-        &lt;title&gt;{{ config.site.title }}&lt;/title&gt;
-        &lt;link rel=&quot;icon&quot; href=&quot;data:image/svg+xml,&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; viewBox=&amp;quot;0 0 100 100&amp;quot;&amp;gt;&amp;lt;text y=&amp;quot;.9em&amp;quot; font-size=&amp;quot;90&amp;quot;&amp;gt;{{ config['site']['favicon'] }}&amp;lt;/text&amp;gt;&amp;lt;/svg&amp;gt;&quot;&gt;
+        &lt;title&gt;{{ config.mkdocs.title or page.title }}&lt;/title&gt;
+        &lt;link rel=&quot;icon&quot; href=&quot;data:image/svg+xml,&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; viewBox=&amp;quot;0 0 100 100&amp;quot;&amp;gt;&amp;lt;text y=&amp;quot;.9em&amp;quot; font-size=&amp;quot;90&amp;quot;&amp;gt;{{ config.mkdocs.favicon or '📘' }}&amp;lt;/text&amp;gt;&amp;lt;/svg&amp;gt;&quot;&gt;
         &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ '/css/highlightjs.min.css' | url }}&quot;&gt;
         &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ '/css/highlightjs-copy.min.css' | url }}&quot;&gt;
         &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ '/css/theme.css' | url }}&quot;&gt;
@@ -113,6 +114,10 @@
 <td>The table of contents for the page, as HTML.</td>
 </tr>
 <tr>
+<td><code>page.title</code></td>
+<td>The first heading in the table of contents.</td>
+</tr>
+<tr>
 <td><code>nav</code></td>
 <td>The site navigation.</td>
 </tr>
@@ -176,8 +181,10 @@
             
             <div class="pagination">
                 
-                <a class="previous" href="../navigation/">← Site Navigation</a>
+                <a class="previous" href="../navigation/">← Interlinking & Navigation</a>
                 
+                
+                <a class="next" href="../roadmap/">Roadmap →</a>
                 
             </div>
             
