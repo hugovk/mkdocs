@@ -314,11 +314,6 @@ class MkDocs:
         return Config(config, filename=filename)
 
     def load_handlers(self, config: dict) -> list[Handler]:
-        if not pathlib.Path('docs').is_dir():
-            return [
-                Package('mkdocs'),
-                Directory('.'),
-            ]
         return [
             Package('mkdocs'),
             Directory('docs'),

@@ -2,6 +2,8 @@
 
 MkDocs is a smart, simple, website design tool.
 
+Documentation available at... [https://www.encode.io/mkdocs/](https://www.encode.io/mkdocs/)
+
 ## Installation
 
 Install the `mkdocs` command line tool...
@@ -9,6 +11,8 @@ Install the `mkdocs` command line tool...
 ```shell
 $ pip install git+https://github.com/encode/mkdocs.git
 ```
+
+This will install the *[version 2.0 prelease](roadmap.md)*.
 
 ## Getting started
 
