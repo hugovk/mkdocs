@@ -1,14 +1,15 @@
 [mkdocs]
-title = "MkDocs"
-favicon = "📘"
 nav = [
     {title="Introduction", path="index.md"},
     {title="Writing Markdown", path="writing.md"},
     {title="Interlinking & Navigation", path="navigation.md"},
     {title="HTML Styling", path="styling.md"}
 ]
+loaders = [
+    {type="package", pkg="mkdocs:theme"},
+    {type="directory", dir="."},
+]
 
-# [context]
-# site_title = "MkDocs"
-# site_description = "..."
-# site_favicon = "📘"
+[context]
+title = "MkDocs"
+favicon = "📘"

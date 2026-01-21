@@ -17,7 +17,7 @@ The rest of this page provides a reference guide to the supported markdown synta
 ```
 
 <h1>H1</h1>
-<h2>H2</h2>
+<h2 style="margin-top: 1.5rem">H2</h2>
 <h3>H3</h3>
 <h4>H4</h4>
 <h5>H5</h5>
