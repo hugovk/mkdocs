@@ -12,17 +12,30 @@ $ pip install git+https://github.com/encode/mkdocs.git
 
 ## Getting started
 
-1. Create a `README.md` page.
-2. Run `mkdocs serve` to view your documentation in a browser.
-3. Run `mkdocs build` to build a static website ready to host.
+Create a `mkdocs.toml` config file.
 
-MkDocs supports [GitHub Flavored Markdown](writing.md) for page authoring.
+```toml
+[mkdocs]
+nav = [
+    {title="Homepage", path="README.md"},
+]
+```
+
+Create a `docs/README.md` page. *MkDocs supports [GitHub Flavored Markdown](writing.md) for page authoring.*
+
+```markdown
+# MkDocs
+
+Let's get writing.
+```
+
+Run `mkdocs serve` to view your documentation in a browser.
 
 ## Adding pages
 
 1. Create additional markdown pages.
 2. Use [markdown interlinking](navigation.md#interlinking) between pages.
-3. Create a `mkdocs.toml` config file to define [the site navigation](navigation.md#navigation).
+3. Edit the `mkdocs.toml` config file to define [the site navigation](navigation.md#navigation).
 
 ## Custom styling
 

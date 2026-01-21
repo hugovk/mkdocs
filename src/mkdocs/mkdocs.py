@@ -270,13 +270,15 @@ class MkDocs:
     def load_config(self, filename: str) -> dict:
         path = pathlib.Path(filename)
         if not path.exists():
-            raise ConfigError(f"Missing config '{filename}'")
-
-        text = path.read_text()
-        try:
-            config = tomllib.loads(text)
-        except tomllib.TOMLDecodeError as exc:
-            raise ConfigError(f"Invalid TOML in config '{filename}'\n{exc}")
+            print("* No 'config.toml' file, using defaults.")
+            config = {}
+            # raise ConfigError(f"Missing config '{filename}'")
+        else:
+            text = path.read_text()
+            try:
+                config = tomllib.loads(text)
+            except tomllib.TOMLDecodeError as exc:
+                raise ConfigError(f"Invalid TOML in config '{filename}'\n{exc}")
 
         default = {
             'mkdocs': {
