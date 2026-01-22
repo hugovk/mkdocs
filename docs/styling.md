@@ -110,7 +110,7 @@ The default theme includes the following static media...
 * [`js/highlightjs.min.js`](js/highlightjs.min.js)
 * [`js/highlightjs-copy.min.js`](js/highlightjs-copy.min.js)
 
-## Themes
+## Themes
 
 Themes can be packaged and distributed as part of a zip archive. The archive can the either be loaded remotely from a URL, or downloaded and included locally.
 
