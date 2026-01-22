@@ -10,7 +10,7 @@ Install the `mkdocs` command line tool...
 $ pip install git+https://github.com/encode/mkdocs.git
 ```
 
-This will install the *[version 2.0 pre-release](roadmap.md)*.
+*This will install the version 2.0 pre-release.*
 
 ## Getting started
 
@@ -52,4 +52,4 @@ Styling adaptations can be kept simple, such as customising the colour scheme, o
 
 ## Legacy compatability
 
-*Work is planned to handle compatability for both [mkdocs 1.x](https://www.mkdocs.org/) and [mkdocs 2.x](https://www.encode.io/mkdocs/) sites.*
+*Work is planned to handle compatability for both [mkdocs 2.x](https://www.encode.io/mkdocs/) sites, and legacy [mkdocs 1.x](https://www.mkdocs.org/) sites.*
