@@ -17,8 +17,7 @@
 <li><a href="../">Introduction</a></li>
 <li><a href="../writing/">Writing Markdown</a></li>
 <li><a class="active" href=".">Interlinking &amp; Navigation</a></li>
-<li><a href="../styling/">HTML Styling</a></li>
-<li><a href="../roadmap/">Roadmap</a></li>
+<li><a href="../styling/">Themes &amp; Styling</a></li>
 </ul>
         </nav>
         <nav class="right">
@@ -42,14 +41,7 @@
 <p>For example, a website with <code>README.md</code> and <code>CONTRIBUTING.md</code> pages, might include the following&hellip;</p>
 <pre><code class="language-markdown">See our [contribution documentation](CONTRIBUTING.md) for more details on getting involved.
 </code></pre>
-<p>If your site includes pages within a directory structure, the page interlinking might include navigation between directories.</p>
-<p>For example, a link from <code>index.md</code> to <code>tutorial/getting-started.md</code>&hellip;</p>
-<pre><code class="language-markdown">The [tutorial](tutorial/getting-started.md) will help get you started.
-</code></pre>
-<p>And a corresponding link from <code>tutorial/getting-started.md</code> back to <code>index.md</code>&hellip;</p>
-<pre><code class="language-markdown">Back to the [homepage](../index.md).
-</code></pre>
-<p>Links can either use the markdown inline style, as above, or the reference style.</p>
+<p>If your site includes pages within a directory structure, the page interlinking might also include <a href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#relative-links">relative paths between directories</a>.</p>
 <h2 id="navigation"><a class="toclink" href="#navigation">Navigation</a></h2>
 <p>You can include site-wide navigation by using the <code>mkdocs.toml</code> configuration.</p>
 <p>This is typically used by the HTML styling to include a navigation menu.</p>
@@ -85,7 +77,8 @@ nav = [
 <li>The file extension is not included in the URL.</li>
 <li>Use either <code>index.md</code> or <code>README.md</code> for root URLs.</li>
 </ul>
-<p>Some examples...</p>
+<p><strong>Examples</strong></p>
+<p>A standard documentation site...</p>
 <table>
 <thead>
 <tr>
@@ -102,18 +95,67 @@ nav = [
 </tr>
 <tr>
 <td><code>markdown.md</code></td>
-<td><code>/markdown/index.html</code></td>
+<td><code>markdown/index.html</code></td>
 <td><code>/markdown/</code></td>
 </tr>
 <tr>
 <td><code>navigation.md</code></td>
-<td><code>/navigation/index.html</code></td>
+<td><code>navigation/index.html</code></td>
 <td><code>/navigation/</code></td>
 </tr>
 <tr>
 <td><code>styling.md</code></td>
-<td><code>/styling/index.html</code></td>
+<td><code>styling/index.html</code></td>
 <td><code>/styling/</code></td>
+</tr>
+</tbody>
+</table>
+<p>Uppercase filenames and GitHub style document paths...</p>
+<table>
+<thead>
+<tr>
+<th><strong>Markdown Page</strong></th>
+<th><strong>HTML output</strong></th>
+<th><strong>URL</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>README.md</code></td>
+<td><code>index.html</code></td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td><code>ABOUT.md</code></td>
+<td><code>about.html</code></td>
+<td><code>/about/</code></td>
+</tr>
+</tbody>
+</table>
+<p>Documentation structure including subdirectories...</p>
+<table>
+<thead>
+<tr>
+<th><strong>Markdown Page</strong></th>
+<th><strong>HTML output</strong></th>
+<th><strong>URL</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>index.md</code></td>
+<td><code>index.html</code></td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td><code>tutorial/quickstart.md</code></td>
+<td><code>tutorial/quickstart/index.html</code></td>
+<td><code>/tutorial/quickstart/</code></td>
+</tr>
+<tr>
+<td><code>tutorial/next-steps.md</code></td>
+<td><code>tutorial/next-steps/index.html</code></td>
+<td><code>/tutorial/next-steps/</code></td>
 </tr>
 </tbody>
 </table>
@@ -124,7 +166,7 @@ nav = [
                 <a class="previous" href="../writing/">← Writing Markdown</a>
                 
                 
-                <a class="next" href="../styling/">HTML Styling →</a>
+                <a class="next" href="../styling/">Themes & Styling →</a>
                 
             </div>
             

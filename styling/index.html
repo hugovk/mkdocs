@@ -2,7 +2,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>HTML Styling</title>
+        <title>Themes & Styling</title>
         <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;📘&lt;/text&gt;&lt;/svg&gt;">
         <link rel="stylesheet" href="../css/highlightjs.min.css">
         <link rel="stylesheet" href="../css/highlightjs-copy.min.css">
@@ -17,17 +17,17 @@
 <li><a href="../">Introduction</a></li>
 <li><a href="../writing/">Writing Markdown</a></li>
 <li><a href="../navigation/">Interlinking &amp; Navigation</a></li>
-<li><a class="active" href=".">HTML Styling</a></li>
-<li><a href="../roadmap/">Roadmap</a></li>
+<li><a class="active" href=".">Themes &amp; Styling</a></li>
 </ul>
         </nav>
         <nav class="right">
             <div class="toc">
 <ul>
-<li><a href="#html-styling">HTML Styling</a><ul>
+<li><a href="#themes-styling">Themes &amp; Styling</a><ul>
 <li><a href="#templates">Templates</a></li>
 <li><a href="#pages">Pages</a></li>
 <li><a href="#statics">Statics</a></li>
+<li><a href="#themes">Themes</a></li>
 </ul>
 </li>
 </ul>
@@ -35,8 +35,18 @@
 
         </nav>
         <main>
-            <h1 id="html-styling"><a class="toclink" href="#html-styling">HTML Styling</a></h1>
+            <h1 id="themes-styling"><a class="toclink" href="#themes-styling">Themes &amp; Styling</a></h1>
 <p>Styling is handled with HTML templating and regular web design.</p>
+<p>The build is made up of various web resources...</p>
+<ul>
+<li><a href="#templates">Templates</a> - <em>The HTML templates used to render documentation pages.</em></li>
+<li><a href="#pages">Pages</a> - <em>The markdown files comprising the documentation.</em></li>
+<li><a href="#statics">Statics</a> - <em>Media assests including images, CSS, and JavaScript.</em></li>
+</ul>
+<p>Resources are loaded either from a <em>theme</em> or from the <em>project documentation</em>. The theme system allows minor local styling overrides, or complete site customisation.</p>
+<ul>
+<li><a href="#themes">Themes</a> - <em>Theme and documentation configuration is handled in the <code>mkdocs.toml</code> file.</em></li>
+</ul>
 <h2 id="templates"><a class="toclink" href="#templates">Templates</a></h2>
 <p>Anything in the <code>/templates/</code> directory is treated as a <a href="https://jinja.palletsprojects.com/en/stable/templates/">Jinja template</a>, and is used to render markdown pages. You can override templates locally and adapt them to make layout changes.</p>
 <p>The base template for rendering markdown pages is <strong><code>templates/base.html</code></strong>. </p>
@@ -178,13 +188,42 @@
 <li><a href="../js/highlightjs.min.js"><code>js/highlightjs.min.js</code></a></li>
 <li><a href="../js/highlightjs-copy.min.js"><code>js/highlightjs-copy.min.js</code></a></li>
 </ul>
+<h2 id="themes"><a class="toclink" href="#themes">Themes</a></h2>
+<p>Themes can be packaged and distributed as part of a zip archive. The archive can the either be loaded remotely from a URL, or downloaded and included locally.</p>
+<p>Controlling how resources are loaded for the theme and documentation is handled with the <code>mkdocs.toml</code> config file.</p>
+<p><strong>Example configurations</strong></p>
+<p><em>The default theme supplied by the <code>mkdocs</code> package, and the documentation served directly from the project directory. This is the default configuration...</em></p>
+<pre><code class="language-toml">[mkdocs]
+resources = [
+    {package=&quot;mkdocs:theme&quot;},
+    {directory=&quot;.&quot;},
+]
+</code></pre>
+<p><em>The default theme as a <code>.zip</code> URL, and a local <code>docs</code> directory...</em></p>
+<pre><code class="language-toml">[mkdocs]
+resources = [
+    {url=&quot;https://github.com/lovelydinosaur/test/archive/refs/heads/main.zip&quot;},
+    {directory=&quot;docs&quot;},
+]
+</code></pre>
+<p><em>A theme downloaded locally, and a <code>docs</code> directory...</em></p>
+<pre><code class="language-toml">[mkdocs]
+resources = [
+    {directory=&quot;theme&quot;},
+    {directory=&quot;docs&quot;},
+]
+</code></pre>
+<p><em>Both the theme and the documentation included in a single directory...</em></p>
+<pre><code class="language-toml">[mkdocs]
+resources = [
+    {directory=&quot;docs&quot;},
+]
+</code></pre>
             
             <div class="pagination">
                 
                 <a class="previous" href="../navigation/">← Interlinking & Navigation</a>
                 
-                
-                <a class="next" href="../roadmap/">Roadmap →</a>
                 
             </div>
             
