@@ -12,21 +12,7 @@ For example, a website with `README.md` and `CONTRIBUTING.md` pages, might inclu
 See our [contribution documentation](CONTRIBUTING.md) for more details on getting involved.
 ```
 
-If your site includes pages within a directory structure, the page interlinking might include navigation between directories.
-
-For example, a link from `index.md` to `tutorial/getting-started.md`&hellip;
-
-```markdown
-The [tutorial](tutorial/getting-started.md) will help get you started.
-```
-
-And a corresponding link from `tutorial/getting-started.md` back to `index.md`&hellip;
-
-```markdown
-Back to the [homepage](../index.md).
-```
-
-Links can either use the markdown inline style, as above, or the reference style.
+If your site includes pages within a directory structure, the page interlinking might also include [relative paths between directories](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#relative-links).
 
 ## Navigation
 
@@ -73,13 +59,30 @@ Ensuring your website has a clean, meaningful URL structure is important for nav
 * The file extension is not included in the URL.
 * Use either `index.md` or `README.md` for root URLs.
 
-Some examples...
+**Examples**
+
+A standard documentation site...
+
+| **Markdown Page** | **HTML output**         | **URL**        |
+|-------------------|-------------------------|----------------|
+| `index.md`        | `index.html`            | `/`            |
+| `markdown.md`     | `markdown/index.html`   | `/markdown/`   |
+| `navigation.md`   | `navigation/index.html` | `/navigation/` |
+| `styling.md`      | `styling/index.html`    | `/styling/`    |
+
+Uppercase filenames and GitHub style document paths...
 
 | **Markdown Page** | **HTML output**          | **URL**        |
 |-------------------|--------------------------|----------------|
-| `index.md`        | `index.html`             | `/`            |
-| `markdown.md`     | `/markdown/index.html`   | `/markdown/`   |
-| `navigation.md`   | `/navigation/index.html` | `/navigation/` |
-| `styling.md`      | `/styling/index.html`    | `/styling/`    |
+| `README.md`       | `index.html`             | `/`            |
+| `ABOUT.md`        | `about.html`             | `/about/`      |
+
+Documentation structure including subdirectories...
+
+| **Markdown Page**        | **HTML output**                  | **URL**                 |
+|--------------------------|----------------------------------|-------------------------|
+| `index.md`               | `index.html`                     | `/`                     |
+| `tutorial/quickstart.md` | `tutorial/quickstart/index.html` | `/tutorial/quickstart/` |
+| `tutorial/next-steps.md` | `tutorial/next-steps/index.html` | `/tutorial/next-steps/` |
 
 <br/>

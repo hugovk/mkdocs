@@ -1,8 +1,11 @@
+import io
 import pathlib
 import posixpath
 import typing
+import zipfile
 
 import httpx
+import flask
 import jinja2
 import markdown
 import tomllib
@@ -103,9 +106,9 @@ class Package(Handler):
     A handler for loading resources from a python package.
     """
 
-    def __init__(self, pkg: str = 'mkdocs') -> None:
-        self._pkg = pkg
-        self._files = importlib.resources.files(pkg).joinpath('theme')
+    def __init__(self, pkg_dir: str = 'mkdocs:theme') -> None:
+        pkg, _, dir = pkg_dir.partition(':')
+        self._files = importlib.resources.files(pkg).joinpath(dir)
 
     def _load_paths(self, subdir: str) -> list[pathlib.Path]:
         files = []
@@ -129,31 +132,32 @@ class Package(Handler):
         return f'<Package {self._pkg!r}>'
 
 
-# class ZipURL(Handler):
-#     def __init__(self, url: str) -> None:
-#         self._url = url
-#         self._topdir = ''
+class ZipURL(Handler):
+    def __init__(self, url: str) -> None:
+        self._url = url
+        self._topdir = ''
 
-#     def load_paths(self) -> list[pathlib.Path]:
-#         r = httpx.get(self._url)
-#         b = io.BytesIO(r.body)
-#         with zipfile.ZipFile(b, 'r') as zip_ref:
-#             names = [
-#                 pathlib.PosixPath(name) for name in zip_ref.namelist()
-#                 if not name.endswith('/')
-#             ]
-#             if len(set([name.parts[0] for name in names])) == 1:
-#                 self._topdir = names[0].parts[0]
-#                 names = [pathlib.PosixPath(*name.parts[1:]) for name in names]
-#         return names
+    def load_paths(self) -> list[pathlib.Path]:
+        r = httpx.get(self._url)
+        b = io.BytesIO(r.content)
+        with zipfile.ZipFile(b, 'r') as zip_ref:
+            names = [
+                pathlib.PosixPath(name) for name in zip_ref.namelist()
+                if not name.endswith('/')
+            ]
+            if len(set([name.parts[0] for name in names])) == 1:
+                self._topdir = names[0].parts[0]
+                names = [pathlib.PosixPath(*name.parts[1:]) for name in names]
+        return names
 
-#     def read(self, path: pathlib.Path) -> bytes:
-#         r = httpx.get(self._url)
-#         b = io.BytesIO(r.body)
-#         with zipfile.ZipFile(b, 'r') as zip_ref:
-#             path = f"{self._topdir}/{path}" if self._topdir else path
-#             with zip_ref.open(str(path)) as f:
-#                 return f.read()
+    def read(self, path: pathlib.Path) -> bytes:
+        r = httpx.get(self._url, follow_redirects=True)
+        b = io.BytesIO(r.content)
+        with zipfile.ZipFile(b, 'r') as zip_ref:
+            path = f"{self._topdir}/{path}" if self._topdir else path
+            with zip_ref.open(str(path)) as f:
+                return f.read()
+
 
 # Resources & Templates...
 
@@ -282,14 +286,14 @@ class MkDocs:
 
         default = {
             'mkdocs': {
-                'title': 'MkDocs',
-                'favicon': '📘',
                 'nav': [],
+                'resources': [
+                    {'package': 'mkdocs:theme'},
+                    {'directory': 'docs'},
+                ],
             },
-            # 'handlers': [
-            #     {'type': 'mkdocs.Package', 'pkg': 'mkdocs:theme'}
-            #     {'type': 'mkdocs.Directory', 'dir': 'docs'}
-            # ],
+            'context': {
+            },
             'markdown': {
                 'extensions': [
                     'fenced_code',
@@ -314,10 +318,27 @@ class MkDocs:
         return Config(config, filename=filename)
 
     def load_handlers(self, config: dict) -> list[Handler]:
-        return [
-            Package('mkdocs'),
-            Directory('docs'),
-        ]
+        handlers = []
+        for handler in config['mkdocs']['resources']:
+            if len(handler) != 1:
+                raise ConfigError("Misconfigured 'resources' section.")
+            key = list(handler.keys())[0]
+            value = list(handler.values())[0]
+            if key == 'url':
+                handlers.append(ZipURL(value))
+            elif key == 'package':
+                handlers.append(Package(value))
+            elif key == 'directory':
+                handlers.append(Directory(value))
+        return handlers
+
+        # return [
+        #     # ZipURL('https://codeload.github.com/lovelydinosaur/test/zip/refs/tags/v2'),
+        #     ZipURL('https://codeload.github.com/lovelydinosaur/test/zip/refs/heads/main'),
+        #     # Package('mkdocs'),
+        #     # ZipURL('https://github.com/lovelydinosaur/test/archive/refs/heads/main.zip'),
+        #     Directory('docs'),
+        # ]
 
     def load_resources(self, handlers: list[Handler]) -> tuple[list[Resource], list[Template]]:
         resources = {}
@@ -405,17 +426,24 @@ class MkDocs:
         md = self.load_md(config)
 
         urls = {resource.url: resource for resource in resources}
-        def app(request):
-            path = request.url.path
-            resource = urls.get(path)
+        app = flask.Flask(__name__)
+
+        @app.route("/")
+        @app.route("/<path:path>")
+        def _(path=''):
+            # path = flask.request.url.path
+            resource = urls.get(f"/{path}")
             if resource is None:
-                redirect = f"{path}/"
+                redirect = f"/{path}/"
                 if urls.get(redirect) is not None:
-                    return httpx.Response(302, headers={'Location': redirect})
-                not_found = httpx.Text('Not Found')
-                return httpx.Response(404, content=not_found)
+                    # return flask.redirect(redirect)
+                    return flask.Response(status=302, headers={'Location': redirect})
+                # not_found = httpx.Text('Not Found')
+                text = 'Not Found'
+                return flask.Response(text, status=404)
+                # return flask.make_response(not_found, 404)
             content = self.render(resource, resources, config, env, md)
             content_type = CONTENT_TYPES.get(resource.output_path.suffix)
-            return httpx.Response(200, headers={'Content-Type': content_type}, content=content)
+            return flask.Response(content, status=200, headers={'Content-Type': content_type})
 
-        httpx.run(app)
+        app.run()

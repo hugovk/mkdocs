@@ -22,7 +22,8 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP",
 ]
 dependencies = [
-    "httpx==1.0.dev3",
+    "httpx",
+    "flask",
     "click",
     "jinja2",
     "markdown",

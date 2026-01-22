@@ -1,6 +1,16 @@
-# HTML Styling
+# Themes & Styling
 
 Styling is handled with HTML templating and regular web design.
+
+The build is made up of various web resources...
+
+* [Templates](#templates) - *The HTML templates used to render documentation pages.*
+* [Pages](#pages) - *The markdown files comprising the documentation.*
+* [Statics](#statics) - *Media assests including images, CSS, and JavaScript.*
+
+Resources are loaded either from a *theme* or from the *project documentation*. The theme system allows minor local styling overrides, or complete site customisation.
+
+* [Themes](#themes) - *Theme and documentation configuration is handled in the `mkdocs.toml` file.*
 
 ## Templates
 
@@ -99,3 +109,50 @@ The default theme includes the following static media...
 * [`js/theme.js`](js/theme.js)
 * [`js/highlightjs.min.js`](js/highlightjs.min.js)
 * [`js/highlightjs-copy.min.js`](js/highlightjs-copy.min.js)
+
+## Themes
+
+Themes can be packaged and distributed as part of a zip archive. The archive can the either be loaded remotely from a URL, or downloaded and included locally.
+
+Controlling how resources are loaded for the theme and documentation is handled with the `mkdocs.toml` config file.
+
+**Example configurations**
+
+*The default theme supplied by the `mkdocs` package, and the documentation served directly from the project directory. This is the default configuration...*
+
+```toml
+[mkdocs]
+resources = [
+    {package="mkdocs:theme"},
+    {directory="."},
+]
+```
+
+*The default theme as a `.zip` URL, and a local `docs` directory...*
+
+```toml
+[mkdocs]
+resources = [
+    {url="https://github.com/lovelydinosaur/test/archive/refs/heads/main.zip"},
+    {directory="docs"},
+]
+```
+
+*A theme downloaded locally, and a `docs` directory...*
+
+```toml
+[mkdocs]
+resources = [
+    {directory="theme"},
+    {directory="docs"},
+]
+```
+
+*Both the theme and the documentation included in a single directory...*
+
+```toml
+[mkdocs]
+resources = [
+    {directory="docs"},
+]
+```
