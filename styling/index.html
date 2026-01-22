@@ -54,7 +54,7 @@
     &lt;head&gt;
         &lt;meta charset=&quot;utf-8&quot;&gt;
         &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-        &lt;title&gt;{{ config.mkdocs.title or page.title }}&lt;/title&gt;
+        &lt;title&gt;{{ nav.current.title or page.title }}{{ &quot; - &quot; ~ config.context.title if config.context.title }}&lt;/title&gt;
         &lt;link rel=&quot;icon&quot; href=&quot;data:image/svg+xml,&amp;lt;svg xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; viewBox=&amp;quot;0 0 100 100&amp;quot;&amp;gt;&amp;lt;text y=&amp;quot;.9em&amp;quot; font-size=&amp;quot;90&amp;quot;&amp;gt;{{ config.mkdocs.favicon or '📘' }}&amp;lt;/text&amp;gt;&amp;lt;/svg&amp;gt;&quot;&gt;
         &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ '/css/highlightjs.min.css' | url }}&quot;&gt;
         &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ '/css/highlightjs-copy.min.css' | url }}&quot;&gt;
@@ -202,7 +202,7 @@ resources = [
 <p><em>The default theme as a <code>.zip</code> URL, and a local <code>docs</code> directory...</em></p>
 <pre><code class="language-toml">[mkdocs]
 resources = [
-    {url=&quot;https://github.com/lovelydinosaur/test/archive/refs/heads/main.zip&quot;},
+    {url=&quot;https://github.com/lovelydinosaur/mkdocs-theme/archive/refs/heads/main.zip&quot;},
     {directory=&quot;docs&quot;},
 ]
 </code></pre>
