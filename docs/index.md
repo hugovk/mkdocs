@@ -52,4 +52,4 @@ Styling adaptations can be kept simple, such as customising the colour scheme, o
 
 ## Compatability
 
-*Work is planned to handle compatability for both [mkdocs 2.x](https://www.encode.io/mkdocs/) sites, and legacy [mkdocs 1.x](https://www.mkdocs.org/) sites.*
+*Work is planned to handle compatability for both [mkdocs 2.x](https://www.encode.io/mkdocs/) sites, and [mkdocs 1.x](https://www.mkdocs.org/) sites.*
