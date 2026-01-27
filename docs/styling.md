@@ -23,7 +23,7 @@ The base template for rendering markdown pages is **`templates/base.html`**.
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ config.mkdocs.title or page.title }}</title>
+        <title>{{ nav.current.title or page.title }}{{ " - " ~ config.context.title if config.context.title }}</title>
         <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;text y=&quot;.9em&quot; font-size=&quot;90&quot;&gt;{{ config.mkdocs.favicon or '📘' }}&lt;/text&gt;&lt;/svg&gt;">
         <link rel="stylesheet" href="{{ '/css/highlightjs.min.css' | url }}">
         <link rel="stylesheet" href="{{ '/css/highlightjs-copy.min.css' | url }}">
@@ -133,7 +133,7 @@ resources = [
 ```toml
 [mkdocs]
 resources = [
-    {url="https://github.com/lovelydinosaur/test/archive/refs/heads/main.zip"},
+    {url="https://github.com/lovelydinosaur/mkdocs-theme/archive/refs/heads/main.zip"},
     {directory="docs"},
 ]
 ```
@@ -156,3 +156,5 @@ resources = [
     {directory="docs"},
 ]
 ```
+
+<br/>

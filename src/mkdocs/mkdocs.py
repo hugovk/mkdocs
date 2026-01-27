@@ -1,4 +1,6 @@
+import base64
 import io
+import json
 import pathlib
 import posixpath
 import typing
@@ -138,7 +140,8 @@ class ZipURL(Handler):
         self._topdir = ''
 
     def load_paths(self) -> list[pathlib.Path]:
-        r = httpx.get(self._url)
+        r = httpx.get(self._url, follow_redirects=True)
+        r.raise_for_status()
         b = io.BytesIO(r.content)
         with zipfile.ZipFile(b, 'r') as zip_ref:
             names = [
@@ -152,6 +155,7 @@ class ZipURL(Handler):
 
     def read(self, path: pathlib.Path) -> bytes:
         r = httpx.get(self._url, follow_redirects=True)
+        r.raise_for_status()
         b = io.BytesIO(r.content)
         with zipfile.ZipFile(b, 'r') as zip_ref:
             path = f"{self._topdir}/{path}" if self._topdir else path
@@ -223,11 +227,14 @@ class TemplateLoader(jinja2.BaseLoader):
     def __init__(self, templates: list[Template]):
         self.templates = templates
 
+    def uptodate(self):
+        return False
+
     def get_source(self, environment: jinja2.Environment, template: str):
         for t in self.templates:
             if t.name == template:
                 source = t.read().decode('utf-8')
-                return source, t.path, None
+                return source, t.path, self.uptodate
         raise jinja2.TemplateNotFound(template)
 
 
