@@ -70,12 +70,16 @@ A standard documentation site...
 | `navigation.md`   | `navigation/index.html` | `/navigation/` |
 | `styling.md`      | `styling/index.html`    | `/styling/`    |
 
+<br/>
+
 Uppercase filenames and GitHub style document paths...
 
 | **Markdown Page** | **HTML output**          | **URL**        |
 |-------------------|--------------------------|----------------|
 | `README.md`       | `index.html`             | `/`            |
 | `ABOUT.md`        | `about.html`             | `/about/`      |
+
+<br/>
 
 Documentation structure including subdirectories...
 
