@@ -7,7 +7,6 @@ class StrikeThru(markdown.inlinepatterns.InlineProcessor):
         el = etree.Element('del')
         el.text = m.group(1)
         return el, m.start(0), m.end(0)
-    
 
 class StrikeThruExtension(markdown.extensions.Extension):
     def extendMarkdown(self, md):

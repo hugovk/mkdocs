@@ -26,7 +26,6 @@ class ShortCodes(markdown.inlinepatterns.InlineProcessor):
         el = etree.Element('span')
         el.text = emoji
         return el, m.start(0), m.end(0)
-    
 
 class ShortCodesExtension(markdown.extensions.Extension):
     def extendMarkdown(self, md):
