@@ -13,7 +13,7 @@ import markdown
 import tomllib
 import importlib.resources
 
-from .rewrite_urls import PageContext
+from .extensions.rewrite_urls import PageContext
 
 
 # Config...
@@ -309,9 +309,9 @@ class MkDocs:
                     'toc',
                     # 'pymdownx.tasklist',
                     # 'gfm_admonition',
-                    'mkdocs.rewrite_urls',
-                    'mkdocs.short_codes',
-                    'mkdocs.strike_thru',
+                    'mkdocs.extensions.rewrite_urls',
+                    'mkdocs.extensions.short_codes',
+                    'mkdocs.extensions.strike_thru',
                 ],
                 'configs': {
                     'footnotes': {'BACKLINK_TITLE': ''},
