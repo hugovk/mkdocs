@@ -263,6 +263,10 @@ class MkDocs:
     def __init__(self, handlers: list[Handler] | None = None):
         self.handlers = handlers
 
+    def _get_handlers(self, config: dict) -> list[Handler]:
+        """Get handlers from instance or load from config."""
+        return self.handlers if self.handlers is not None else self.load_handlers(config)
+
     def path_to_url(self, path: pathlib.Path) -> str:
         if str(path).lower() in ('readme.md', 'index.md', 'index.html'):
             # 'README.md' -> '/'
@@ -411,7 +415,7 @@ class MkDocs:
         $ mkdocs build
         """
         config = self.load_config('mkdocs.toml')
-        handlers = self.handlers if self.handlers is not None else self.load_handlers(config)
+        handlers = self._get_handlers(config)
         resources, templates = self.load_resources(handlers)
         env = self.load_env(templates)
         md = self.load_md(config)
@@ -428,7 +432,7 @@ class MkDocs:
         $ mkdocs serve
         """
         config = self.load_config('mkdocs.toml')
-        handlers = self.handlers if self.handlers is not None else self.load_handlers(config)
+        handlers = self._get_handlers(config)
         resources, templates = self.load_resources(handlers)
         env = self.load_env(templates)
         md = self.load_md(config)
