@@ -109,6 +109,7 @@ class Package(Handler):
     """
 
     def __init__(self, pkg_dir: str = 'mkdocs:theme') -> None:
+        self._pkg_dir = pkg_dir
         pkg, _, dir = pkg_dir.partition(':')
         self._files = importlib.resources.files(pkg).joinpath(dir)
 
@@ -131,7 +132,7 @@ class Package(Handler):
         return self._files.joinpath(path).read_bytes()
 
     def __repr__(self):
-        return f'<Package {self._pkg!r}>'
+        return f'<Package {self._pkg_dir!r}>'
 
 
 class ZipURL(Handler):
@@ -259,8 +260,8 @@ CONTENT_TYPES = {
 # Here we go...
 
 class MkDocs:
-    def __init__(self):
-        pass
+    def __init__(self, handlers: list[Handler] | None = None):
+        self.handlers = handlers
 
     def path_to_url(self, path: pathlib.Path) -> str:
         if str(path).lower() in ('readme.md', 'index.md', 'index.html'):
@@ -410,7 +411,7 @@ class MkDocs:
         $ mkdocs build
         """
         config = self.load_config('mkdocs.toml')
-        handlers = self.load_handlers(config)
+        handlers = self.handlers if self.handlers is not None else self.load_handlers(config)
         resources, templates = self.load_resources(handlers)
         env = self.load_env(templates)
         md = self.load_md(config)
@@ -427,7 +428,7 @@ class MkDocs:
         $ mkdocs serve
         """
         config = self.load_config('mkdocs.toml')
-        handlers = self.load_handlers(config)
+        handlers = self.handlers if self.handlers is not None else self.load_handlers(config)
         resources, templates = self.load_resources(handlers)
         env = self.load_env(templates)
         md = self.load_md(config)
