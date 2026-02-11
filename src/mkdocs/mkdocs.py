@@ -170,7 +170,7 @@ class Resource:
         self.path = path
         self.url = url
         self.handler = handler
- 
+
     @property
     def output_path(self) -> pathlib.Path:
         if self.url.endswith('/'):
@@ -238,29 +238,17 @@ class TemplateLoader(jinja2.BaseLoader):
         raise jinja2.TemplateNotFound(template)
 
 
-###############################################################################
-# A mapping of file extensions to content types.
-# TODO: Expand this to use the same defaults as nginx...
-# https://github.com/nginx/nginx/blob/master/conf/mime.types
-
-CONTENT_TYPES = {
-    ".json": "application/json",
-    ".js": "application/javascript",
-    ".html": "text/html",
-    ".css": "text/css",
-    ".png": "image/png",
-    ".jpeg": "image/jpeg",
-    ".jpg": "image/jpeg",
-    ".gif": "image/gif",
-}
-
 
 ###############################################################################
 # Here we go...
 
 class MkDocs:
     def __init__(self):
-        pass
+        self.config = self.load_config('mkdocs.toml')
+        self.handlers = self.load_handlers(self.config)
+        self.resources, self.templates = self.load_resources(self.handlers)
+        self.env = self.load_env(self.templates)
+        self.md = self.load_md(self.config)
 
     def path_to_url(self, path: pathlib.Path) -> str:
         if str(path).lower() in ('readme.md', 'index.md', 'index.html'):
@@ -384,73 +372,20 @@ class MkDocs:
                 lines.extend(sub_lines)
         return lines
 
-    def render(self, resource: Resource, resources: list[Resource], config: dict, env: jinja2.Environment, md: markdown.Markdown) -> bytes:
+    def render(self, resource: Resource) -> bytes:
         if resource.path.suffix == '.md':
-            mapping = {resource.path: resource.url for resource in resources}
+            mapping = {resource.path: resource.url for resource in self.resources}
             with PageContext(resource.path, mapping, relative=False) as ctx:
-                nav_config = config['mkdocs'].get('nav', [])
+                nav_config = self.config['mkdocs'].get('nav', [])
                 nav_lines = self.nav_lines(nav_config)
                 nav_text = '\n'.join(nav_lines)
-                nav_html = md.reset().convert(nav_text)
+                nav_html = self.md.reset().convert(nav_text)
                 nav = Nav(html=nav_html, current=ctx.current, previous=ctx.previous, next=ctx.next)
             with PageContext(resource.path, mapping, relative=True):
                 text = resource.read().decode('utf-8')
-                html = md.reset().convert(text)
-                title = md.toc_tokens[0]['name'] if md.toc_tokens else ''
-                page = Page(text=text, html=html, toc=md.toc, title=title, url=resource.url, path=resource.path)
-            base = env.get_template('base.html')
-            return base.render(page=page, nav=nav, config=config).encode('utf-8')
+                html = self.md.reset().convert(text)
+                title = self.md.toc_tokens[0]['name'] if self.md.toc_tokens else ''
+                page = Page(text=text, html=html, toc=self.md.toc, title=title, url=resource.url, path=resource.path)
+            base = self.env.get_template('base.html')
+            return base.render(page=page, nav=nav, config=self.config).encode('utf-8')
         return resource.read()
-
-    ###########################################################################
-    # Commands...
-
-    def build(self):
-        """
-        $ mkdocs build
-        """
-        config = self.load_config('mkdocs.toml')
-        handlers = self.load_handlers(config)
-        resources, templates = self.load_resources(handlers)
-        env = self.load_env(templates)
-        md = self.load_md(config)
-
-        buildpath = pathlib.Path('site')
-        for resource in resources:
-            output = self.render(resource, resources, config, env, md)
-            build_path = buildpath.joinpath(resource.output_path)
-            build_path.parent.mkdir(parents=True, exist_ok=True)
-            build_path.write_bytes(output)
-
-    def serve(self):
-        """
-        $ mkdocs serve
-        """
-        config = self.load_config('mkdocs.toml')
-        handlers = self.load_handlers(config)
-        resources, templates = self.load_resources(handlers)
-        env = self.load_env(templates)
-        md = self.load_md(config)
-
-        urls = {resource.url: resource for resource in resources}
-        app = flask.Flask(__name__)
-
-        @app.route("/")
-        @app.route("/<path:path>")
-        def _(path=''):
-            # path = flask.request.url.path
-            resource = urls.get(f"/{path}")
-            if resource is None:
-                redirect = f"/{path}/"
-                if urls.get(redirect) is not None:
-                    # return flask.redirect(redirect)
-                    return flask.Response(status=302, headers={'Location': redirect})
-                # not_found = httpx.Text('Not Found')
-                text = 'Not Found'
-                return flask.Response(text, status=404)
-                # return flask.make_response(not_found, 404)
-            content = self.render(resource, resources, config, env, md)
-            content_type = CONTENT_TYPES.get(resource.output_path.suffix)
-            return flask.Response(content, status=200, headers={'Content-Type': content_type})
-
-        app.run()

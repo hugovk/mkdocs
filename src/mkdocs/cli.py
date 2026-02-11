@@ -1,19 +1,60 @@
 import click
 import mkdocs
 
+import pathlib
+import flask
 
-@click.group()
+
+CONTENT_TYPES = {
+    ".json": "application/json",
+    ".js": "application/javascript",
+    ".html": "text/html",
+    ".css": "text/css",
+    ".png": "image/png",
+    ".jpeg": "image/jpeg",
+    ".jpg": "image/jpeg",
+    ".gif": "image/gif",
+}
+
+
+def build(mk: mkdocs.MkDocs) -> None:
+    buildpath = pathlib.Path('site')
+    for resource in mk.resources:
+        output = mk.render(resource)
+        build_path = buildpath.joinpath(resource.output_path)
+        build_path.parent.mkdir(parents=True, exist_ok=True)
+        build_path.write_bytes(output)
+
+
+def serve(mk: mkdocs.MkDocs) -> None:
+    urls = {resource.url: resource for resource in mk.resources}
+    app = flask.Flask(__name__)
+
+    @app.route("/")
+    @app.route("/<path:path>")
+    def _(path=''):
+        # path = flask.request.url.path
+        resource = urls.get(f"/{path}")
+        if resource is None:
+            redirect = f"/{path}/"
+            if urls.get(redirect) is not None:
+                # return flask.redirect(redirect)
+                return flask.Response(status=302, headers={'Location': redirect})
+            # not_found = httpx.Text('Not Found')
+            text = 'Not Found'
+            return flask.Response(text, status=404)
+            # return flask.make_response(not_found, 404)
+        content = mk.render(resource)
+        content_type = CONTENT_TYPES.get(resource.output_path.suffix)
+        return flask.Response(content, status=200, headers={'Content-Type': content_type})
+
+    app.run()
+
+
 def cli():
-    pass
-
-
-@cli.command(name="build")
-def build():
-    m = mkdocs.MkDocs()
-    m.build()
-
-
-@cli.command(name="serve")
-def serve():
-    m = mkdocs.MkDocs()
-    m.serve()
+    mk = mkdocs.MkDocs()
+    group = click.Group(commands=[
+        click.Command(name='build', callback=lambda: build(mk)),
+        click.Command(name='serve', callback=lambda: serve(mk)),
+    ])
+    return group()
