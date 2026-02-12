@@ -121,40 +121,33 @@ Controlling how resources are loaded for the theme and documentation is handled 
 *The default theme supplied by the `mkdocs` package, and the documentation served directly from the project directory. This is the default configuration...*
 
 ```toml
-[mkdocs]
-resources = [
-    {package="mkdocs:theme"},
-    {directory="."},
-]
+[loaders]
+theme = "pkg://mkdocs/default"
+docs = "dir://"
 ```
 
 *The default theme as a `.zip` URL, and a local `docs` directory...*
 
 ```toml
-[mkdocs]
-resources = [
-    {url="https://github.com/lovelydinosaur/mkdocs-theme/archive/refs/heads/main.zip"},
-    {directory="docs"},
-]
+[loaders]
+theme = "https://github.com/lovelydinosaur/mkdocs-theme/archive/refs/heads/main.zip"
+docs = "dir://docs"
 ```
 
 *A theme downloaded locally, and a `docs` directory...*
 
 ```toml
-[mkdocs]
-resources = [
-    {directory="theme"},
-    {directory="docs"},
-]
+[loaders]
+theme = "dir://theme"
+docs = "dir://docs"
 ```
 
 *Both the theme and the documentation included in a single directory...*
 
 ```toml
 [mkdocs]
-resources = [
-    {directory="docs"},
-]
+theme = "dir://docs"
+docs = "dir://docs"
 ```
 
 <br/>
