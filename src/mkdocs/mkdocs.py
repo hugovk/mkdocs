@@ -1,6 +1,7 @@
 import base64
 import io
 import json
+import os
 import pathlib
 import posixpath
 import typing
@@ -13,6 +14,7 @@ import markdown
 import tomllib
 import importlib.resources
 
+from urllib.parse import urlparse
 from .extensions.rewrite_urls import PageContext
 
 
@@ -85,9 +87,11 @@ class Directory(Handler):
     A handler for loading resources from the local filesystem.
     """
 
-    def __init__(self, dir: pathlib.Path | None = None) -> None:
-        self._dir = pathlib.Path.cwd() if dir is None else pathlib.Path(dir)
-        self._dir_repr = '[CWD]' if dir is None else f"{dir!r}"
+    def __init__(self, url: str = 'dir://') -> None:
+        parsed = urlparse(url)
+        dir = parsed.netloc + parsed.path
+        self._dir = pathlib.Path(dir.lstrip('/')) if dir else pathlib.Path.cwd()
+        self._dir_repr = f"{dir!r}" if dir else '[CWD]'
 
     def load_paths(self) -> list[pathlib.Path]:
         return sorted([
@@ -108,8 +112,9 @@ class Package(Handler):
     A handler for loading resources from a python package.
     """
 
-    def __init__(self, pkg_dir: str = 'mkdocs:theme') -> None:
-        pkg, _, dir = pkg_dir.partition(':')
+    def __init__(self, url: str = 'pkg://mkdocs/default') -> None:
+        parsed = urlparse(url)
+        pkg, dir = parsed.netloc, parsed.path.lstrip('/')
         self._files = importlib.resources.files(pkg).joinpath(dir)
 
     def _load_paths(self, subdir: str) -> list[pathlib.Path]:
@@ -135,7 +140,7 @@ class Package(Handler):
 
 
 class ZipURL(Handler):
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str = "https://") -> None:
         self._url = url
         self._topdir = ''
 
@@ -244,6 +249,11 @@ class TemplateLoader(jinja2.BaseLoader):
 
 class MkDocs:
     def __init__(self):
+        self.loaders = {
+            'https': ZipURL,
+            'pkg': Package,
+            'dir': Directory,
+        }
         self.config = self.load_config('mkdocs.toml')
         self.handlers = self.load_handlers(self.config)
         self.resources, self.templates = self.load_resources(self.handlers)
@@ -282,10 +292,10 @@ class MkDocs:
         default = {
             'mkdocs': {
                 'nav': [],
-                'resources': [
-                    {'package': 'mkdocs:theme'},
-                    {'directory': 'docs'},
-                ],
+            },
+            'loaders': {
+                'theme': 'pkg://mkdocs/default',
+                'docs': 'dir://',
             },
             'context': {
             },
@@ -313,27 +323,18 @@ class MkDocs:
         return Config(config, filename=filename)
 
     def load_handlers(self, config: dict) -> list[Handler]:
-        handlers = []
-        for handler in config['mkdocs']['resources']:
-            if len(handler) != 1:
-                raise ConfigError("Misconfigured 'resources' section.")
-            key = list(handler.keys())[0]
-            value = list(handler.values())[0]
-            if key == 'url':
-                handlers.append(ZipURL(value))
-            elif key == 'package':
-                handlers.append(Package(value))
-            elif key == 'directory':
-                handlers.append(Directory(value))
-        return handlers
+        loaders_config = config['loaders']
 
-        # return [
-        #     # ZipURL('https://codeload.github.com/lovelydinosaur/test/zip/refs/tags/v2'),
-        #     ZipURL('https://codeload.github.com/lovelydinosaur/test/zip/refs/heads/main'),
-        #     # Package('mkdocs'),
-        #     # ZipURL('https://github.com/lovelydinosaur/test/archive/refs/heads/main.zip'),
-        #     Directory('docs'),
-        # ]
+        theme_url = loaders_config['theme']
+        docs_url = loaders_config['docs']
+
+        urls = [docs_url] if theme_url == docs_url else [theme_url, docs_url]
+        loaders = []
+        for url in urls:
+            scheme = urlparse(url).scheme
+            cls = self.loaders[scheme]
+            loaders.append(cls(url))
+        return loaders
 
     def load_resources(self, handlers: list[Handler]) -> tuple[list[Resource], list[Template]]:
         resources = {}

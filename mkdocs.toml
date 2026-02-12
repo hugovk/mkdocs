@@ -5,10 +5,10 @@ nav = [
     {title="Interlinking & Navigation", path="navigation.md"},
     {title="Themes & Styling", path="styling.md"}
 ]
-resources = [
-    {package="mkdocs:theme"},
-    {directory="docs"},
-]
+
+[loaders]
+theme = "pkg://mkdocs/default"
+docs = "dir://docs"
 
 [context]
 title = "MkDocs"
