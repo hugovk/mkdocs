@@ -4,6 +4,8 @@ MkDocs is a smart, simple, website design tool.
 
 ![MkDocs](docs/img/mkdocs.png)
 
+<br/>
+
 ## Installation
 
 Install the `mkdocs` command line tool...
@@ -21,6 +23,8 @@ $ pip install git+https://github.com/encode/mkdocs.git
 3. Run `mkdocs build` to build a static website ready to host.
 
 *MkDocs supports [GitHub Flavored Markdown](docs/writing.md) for page authoring.*
+
+<br/>
 
 ## Writing your docs
 
@@ -49,6 +53,8 @@ favicon = "📘"
 
 *Use either [`README.md` or `index.md`](docs/navigation.md#url-structure) for the homepage.*
 
+<br/>
+
 ## Custom styling
 
 Styling adaptations can be kept simple, such as customising the colour scheme, or more comprehensive, such as creating an entirely new theme.
@@ -58,6 +64,8 @@ Styling adaptations can be kept simple, such as customising the colour scheme, o
 3. Override or add [CSS and JavaScript](docs/styling.md#statics) static assets.
 
 Take a look at the [default theme](https://github.com/lovelydinosaur/mkdocs-theme) and the [kelp theme](https://github.com/lovelydinosaur/kelp-theme) for examples of getting started with theming.
+
+<br/>
 
 ![Kelp](docs/img/kelp.png)
 
