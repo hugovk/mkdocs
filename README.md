@@ -35,10 +35,14 @@ nav = [
     {path: "README.md", title: "Introduction"},
     {path: "CREDITS.md", title: "Credits"},
 ]
-loaders = [
-    {package: "mkdocs:theme"},
-    {directory: "docs"},
-]
+
+[loaders]
+theme = "pkg://mkdocs/default"
+docs = "dir://docs"
+
+[context]
+title = "Documentation"
+favicon = "📘"
 ```
 
 *Use either [`README.md` or `index.md`](navigation.md#url-structure) for the homepage.*
@@ -49,7 +53,3 @@ Styling adaptations can be kept simple, such as customising the colour scheme, o
 
 1. Modify [the HTML templating](styling.md#templates) to customise the layout.
 2. Override or add [CSS and JavaScript](styling.md#statics) static assets.
-
-## Compatability
-
-*Work is planned to handle compatability for both [mkdocs 2.x](https://www.encode.io/mkdocs/) sites, and [mkdocs 1.x](https://www.mkdocs.org/) sites.*
