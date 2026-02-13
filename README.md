@@ -16,6 +16,8 @@ $ pip install git+https://github.com/encode/mkdocs.git
 
 *This will install the version 2.0 pre-release.*
 
+<br/>
+
 ## Getting started
 
 1. Create a `README.md` page.
