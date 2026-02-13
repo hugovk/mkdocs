@@ -14,6 +14,7 @@ CONTENT_TYPES = {
     ".jpeg": "image/jpeg",
     ".jpg": "image/jpeg",
     ".gif": "image/gif",
+    ".svg": "image/svg+xml",
 }
 
 
