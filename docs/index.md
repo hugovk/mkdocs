@@ -2,8 +2,6 @@
 
 MkDocs is a smart, simple, website design tool.
 
-![MkDocs](img/mkdocs.png)
-
 ## Installation
 
 Install the `mkdocs` command line tool...
@@ -58,7 +56,3 @@ Styling adaptations can be kept simple, such as customising the colour scheme, o
 3. Override or add [CSS and JavaScript](styling.md#statics) static assets.
 
 Take a look at the [default theme](https://github.com/lovelydinosaur/mkdocs-theme) and the [kelp theme](https://github.com/lovelydinosaur/kelp-theme) for examples of getting started with theming.
-
-![Kelp](img/kelp.png)
-
-*The MkDocs documentation, served with the Kelp theme.*
