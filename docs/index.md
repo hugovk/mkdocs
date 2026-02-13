@@ -25,15 +25,15 @@ $ pip install git+https://github.com/encode/mkdocs.git
 1. Create additional markdown pages.
 2. Use [markdown interlinking](navigation.md#interlinking) between pages.
 3. Create a `mkdocs.toml` file to define [the site navigation](navigation.md#navigation) and other configuration.
-4. Move your markdown pages into a `docs` directory, and [configure the theme](styling.md#themes).
+4. Move your markdown pages into a `docs` directory, and update the config.
 
 An example `mkdocs.toml`...
 
 ```toml
 [mkdocs]
 nav = [
-    {path: "README.md", title: "Introduction"},
-    {path: "CREDITS.md", title: "Credits"},
+    {path="README.md", title="Introduction"},
+    {path="CREDITS.md", title="Credits"},
 ]
 
 [loaders]
@@ -51,5 +51,8 @@ favicon = "📘"
 
 Styling adaptations can be kept simple, such as customising the colour scheme, or more comprehensive, such as creating an entirely new theme.
 
-1. Modify [the HTML templating](styling.md#templates) to customise the layout.
-2. Override or add [CSS and JavaScript](styling.md#statics) static assets.
+1. Configure the base theme for your project.
+2. Modify [the HTML templating](styling.md#templates) to customise the layout.
+3. Override or add [CSS and JavaScript](styling.md#statics) static assets.
+
+Take a look at the [default theme](https://github.com/lovelydinosaur/mkdocs-theme) and the [kelp theme](https://github.com/lovelydinosaur/kelp-theme) for examples of getting started with theming.
